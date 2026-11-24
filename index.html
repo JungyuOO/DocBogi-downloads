@@ -6,8 +6,8 @@
   <meta name="description" content="Docvia에서 업무 문서를 찾아 요약과 검수 결과를 확인하고, 문서 작업실에서 수정한 사본을 저장하세요.">
   <meta name="color-scheme" content="light">
   <link rel="icon" href="media/icon.png?v=3" type="image/png">
-  <link rel="stylesheet" href="style.css?v=7">
-  <script src="demo.js?v=7" defer></script>
+  <link rel="stylesheet" href="style.css?v=8">
+  <script src="demo.js?v=8" defer></script>
   <title>Docvia · 업무 문서 관리 앱</title>
 </head>
 <body>
@@ -28,22 +28,87 @@
   </header>
 
   <main id="main" tabindex="-1">
-    <section class="hero container" aria-labelledby="hero-title">
-      <h1 id="hero-title">업무 문서를<br><em>찾고, 검토하고, 고치세요.</em></h1>
-      <p class="hero-description">내 PC에 문서를 모아 파일명과 본문으로 검색하세요. 연결한 AI로 요약·검수하고, 작업실에서 수정한 문서는 사본으로 저장할 수 있습니다.</p>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-layout">
+        <div class="hero-copy">
+          <h1 id="hero-title">흩어진 문서,<br><em>필요한 순간에.</em></h1>
+          <p class="hero-description">내 PC에 업무 문서를 모으고, 필요한 내용을 바로 찾으세요. 연결한 AI로 요약과 오탈자를 확인하고, 수정한 문서는 사본으로 저장할 수 있습니다.</p>
 
-      <section class="download-group" id="downloads" aria-label="운영체제별 다운로드" aria-describedby="download-status">
-        <div class="platforms">
-          <a class="platform" href="https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.0.9/Docvia-Setup-1.0.9-x64.exe" aria-label="Windows x64 EXE 다운로드">
-            <span>Windows</span><small>x64 · EXE</small>
-          </a>
-          <a class="platform" href="https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.0.9/Docvia-1.0.9-mac-universal.dmg" aria-label="macOS Apple Silicon 및 Intel 공용 DMG 다운로드">
-            <span>macOS</span><small>Universal · DMG</small>
-          </a>
+          <section class="download-group" id="downloads" aria-label="운영체제별 다운로드" aria-describedby="download-status">
+            <div class="platforms">
+              <a class="platform" href="https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.0/Docvia-Setup-1.1.0-x64.exe" aria-label="Windows x64 EXE 다운로드">
+                <span>Windows</span><small>x64 · EXE</small>
+              </a>
+              <a class="platform" href="https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.0/Docvia-1.1.0-mac-universal.dmg" aria-label="macOS Apple Silicon 및 Intel 공용 DMG 다운로드">
+                <span>macOS</span><small>Universal · DMG</small>
+              </a>
+            </div>
+            <p id="download-status">v1.1.0 · <a href="https://github.com/JungyuOO/Docvia-downloads/blob/main/user-guide.md">사용 가이드</a> · <a href="https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.1.0">SHA-256 확인</a></p>
+          </section>
         </div>
-        <p id="download-status">v1.0.9 · <a href="https://github.com/JungyuOO/Docvia-downloads/blob/main/user-guide.md">사용 가이드</a> · <a href="https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.0.9">SHA-256 확인</a></p>
-      </section>
 
+        <figure class="hero-experience" aria-labelledby="preview-caption">
+          <div class="hero-stage" data-document-preview>
+            <div class="hero-files" role="group" aria-label="미리 볼 예제 문서">
+              <button class="hero-file hero-file-word" type="button" aria-pressed="true" aria-controls="preview-minutes">
+                <span class="hero-file-icon" aria-hidden="true">W</span>
+                <span class="hero-file-text">
+                  <span class="hero-file-name">주간 업무 회의록.docx</span>
+                  <span class="hero-file-route"><span aria-hidden="true">↳</span> 회의록</span>
+                </span>
+              </button>
+              <button class="hero-file hero-file-slides" type="button" aria-pressed="false" aria-controls="preview-plan">
+                <span class="hero-file-icon" aria-hidden="true">P</span>
+                <span class="hero-file-text">
+                  <span class="hero-file-name">분기 운영 계획.pptx</span>
+                  <span class="hero-file-route"><span aria-hidden="true">↳</span> 운영 계획</span>
+                </span>
+              </button>
+              <button class="hero-file hero-file-sheet" type="button" aria-pressed="false" aria-controls="preview-schedule">
+                <span class="hero-file-icon" aria-hidden="true">X</span>
+                <span class="hero-file-text">
+                  <span class="hero-file-name">업무 일정표.xlsx</span>
+                  <span class="hero-file-route"><span aria-hidden="true">↳</span> 업무 일정</span>
+                </span>
+              </button>
+            </div>
+
+            <div class="hero-summary">
+              <div class="hero-summary-header">
+                <span class="file-mark" aria-hidden="true"></span>
+                문서 미리보기
+              </div>
+              <div class="hero-summary-body" id="preview-minutes">
+                <h2>주간 업무 회의록</h2>
+                <p class="hero-summary-folder">회의록 폴더</p>
+                <p>신규 고객 교육은 목요일에 진행합니다. 운영팀 검토본은 수요일까지 공유하기로 했습니다.</p>
+                <p class="hero-summary-source">2쪽 · 결정 사항</p>
+              </div>
+              <div class="hero-summary-body" id="preview-plan" hidden>
+                <h2>분기 운영 계획</h2>
+                <p class="hero-summary-folder">운영 계획 폴더</p>
+                <p>시범 운영 뒤 사용자 의견을 수집하고, 분기 말에 운영 지표와 개선 항목을 검토합니다.</p>
+                <p class="hero-summary-source">4쪽 · 운영 일정</p>
+              </div>
+              <div class="hero-summary-body" id="preview-schedule" hidden>
+                <h2>업무 일정표</h2>
+                <p class="hero-summary-folder">업무 일정 폴더</p>
+                <p>제안서 내부 검토는 화요일, 고객 전달은 금요일로 예정되어 있습니다.</p>
+                <p class="hero-summary-source">일정 시트 · 8~9행</p>
+              </div>
+            </div>
+          </div>
+
+          <figcaption class="hero-preview-caption">
+            <p id="preview-caption">예제 문서를 가리키거나 선택하면 요약과 분류를 볼 수 있습니다.</p>
+            <button class="hero-playback" type="button" data-preview-playback hidden>자동 시연 일시정지</button>
+          </figcaption>
+          <p class="visually-hidden" role="status" data-preview-status></p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="container product-demo" aria-label="Docvia 사용 영상">
       <figure class="demo" id="demo">
         <div class="demo-tab">
           <span class="file-mark" aria-hidden="true"></span>

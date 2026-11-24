@@ -14,10 +14,10 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세�
 
 | 운영체제 | 설치 파일 | 설치 방법 |
 | --- | --- | --- |
-| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.0.9/Docvia-Setup-1.0.9-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
-| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.0.9/Docvia-1.0.9-mac-universal.dmg) | DMG를 열어 Docvia를 **응용 프로그램**으로 옮겨 실행합니다. |
+| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.0/Docvia-Setup-1.1.0-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
+| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.0/Docvia-1.1.0-mac-universal.dmg) | DMG를 열어 Docvia를 **응용 프로그램**으로 옮겨 실행합니다. |
 
-배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.0.9) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
+배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.1.0) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
 
 ## 빠른 시작
 

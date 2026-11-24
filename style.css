@@ -59,25 +59,309 @@ nav { gap: clamp(12px, 3vw, 30px); }
 nav a { text-decoration: none; color: var(--muted); font-size: 14px; }
 .nav-download { color: var(--accent); font-weight: 700; }
 
+.site-header {
+  background: #0a1325;
+  color: #f7faff;
+  border-bottom-color: #22324c;
+}
+.site-header nav a { color: #c7d1e5; }
+.site-header nav a:hover,
+.site-header .nav-download { color: #a9c7ff; }
+
 .hero {
-  padding-top: clamp(36px, 6vw, 72px);
-  text-align: center;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #f7faff;
+  background:
+    radial-gradient(ellipse at 75% 24%, #263d67 0%, transparent 51%),
+    linear-gradient(122deg, #0a1325 16%, #121f38 68%, #0b1425);
+}
+.hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: 24% 0 0 45%;
+  background-image:
+    linear-gradient(#5474aa22 1px, transparent 1px),
+    linear-gradient(90deg, #5474aa22 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(120deg, transparent 6%, #000 60%, transparent);
+  content: "";
+}
+.hero-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.78fr) minmax(0, 1.22fr);
+  align-items: center;
+  gap: clamp(24px, 4.5vw, 62px);
+  min-height: 574px;
+  padding-block: clamp(38px, 7vw, 88px);
 }
 .hero h1 {
-  font-size: clamp(34px, 6.15vw, 79px);
+  font-size: clamp(38px, 5.3vw, 72px);
   line-height: 1.13;
   letter-spacing: -0.075em;
   font-weight: 800;
   word-break: keep-all;
 }
-.hero h1 em { font-style: normal; color: var(--accent); }
+.hero h1 em { font-style: normal; color: #b3caff; }
 .hero-description {
-  max-width: 530px;
-  margin: 24px auto 0;
-  color: var(--muted);
+  max-width: 390px;
+  margin-top: 24px;
+  color: #c7d1e5;
   font-size: clamp(15px, 1.65vw, 17px);
   line-height: 1.72;
   word-break: keep-all;
+}
+.hero .platforms { justify-content: flex-start; }
+.hero a.platform {
+  border-color: #c5d7ff;
+  background: #c5d7ff;
+  color: #142646;
+}
+.hero a.platform:hover { background: #e1ebff; border-color: #e1ebff; }
+.hero a.platform + a.platform {
+  color: #e6eeff;
+  background: #172640;
+  border-color: #536991;
+}
+.hero a.platform + a.platform:hover { background: #253a5d; }
+.hero #download-status { color: #b7c4dd; }
+.hero #download-status a:hover { color: white; }
+.hero :is(a, button):focus-visible {
+  outline: 2px solid #b9d3ff;
+  outline-offset: 4px;
+}
+
+.hero-experience {
+  position: relative;
+  min-width: 0;
+}
+.hero-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(12px, 2.2vw, 30px);
+  min-height: 345px;
+  padding: 38px 12px 28px 8px;
+  isolation: isolate;
+}
+.hero-stage::before {
+  position: absolute;
+  z-index: -1;
+  inset: 8px 8% 10px 0;
+  border: 1px solid #5978ae66;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 18%, #5e7fbb40, #172845bf 78%);
+  box-shadow: 0 32px 56px #080e1caa, inset 0 1px 0 #adccff44;
+  transform: perspective(740px) rotateX(49deg) rotateZ(-11deg);
+  content: "";
+}
+.hero-files {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 13px;
+  padding-block: 6px;
+}
+.hero-file {
+  --tab: #244dac;
+  --tab-paper: #dbe6ff;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 13px);
+  width: 100%;
+  min-height: 70px;
+  padding: 10px clamp(9px, 1.4vw, 15px);
+  color: #1f2c43;
+  background: linear-gradient(154deg, #fbfdff, #e2e9f7);
+  border: 1px solid #cad7ed;
+  border-radius: 8px;
+  box-shadow: 0 3px 0 #a2b5d6, 0 6px 0 #6c83aa, 0 12px 20px #080f2085;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transform: rotate(-1.3deg);
+}
+.hero-file-slides {
+  --tab: #914322;
+  --tab-paper: #ffe5d7;
+  margin-left: 5px;
+  transform: rotate(.7deg);
+}
+.hero-file-sheet {
+  --tab: #265e4b;
+  --tab-paper: #d7efe4;
+  transform: rotate(-.6deg);
+}
+.hero-file[aria-pressed="true"] {
+  z-index: 1;
+  color: #15284b;
+  background: linear-gradient(154deg, white, #eef4ff);
+  border-color: #a8c8ff;
+  box-shadow: 0 3px 0 #bdd0ef, 0 6px 0 #7f9fcf, 0 17px 26px #061227b5;
+  transform: translateY(-4px) rotate(0);
+}
+.hero-file-icon {
+  display: grid;
+  width: 32px;
+  height: 36px;
+  place-items: center;
+  border-radius: 4px;
+  color: var(--tab);
+  background: var(--tab-paper);
+  font: 750 14px/1 system-ui, sans-serif;
+  box-shadow: inset 0 1px 0 #fff9;
+}
+.hero-file-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.hero-file-route {
+  display: block;
+  margin-top: 3px;
+  color: #4e6281;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+.hero-file-route span { color: #315bb0; }
+.hero-summary {
+  position: relative;
+  min-width: 0;
+  min-height: 242px;
+  overflow: hidden;
+  border: 1px solid #56709b;
+  border-radius: 12px;
+  background: #101c33;
+  box-shadow: 0 26px 58px #070e1dcc, inset 0 1px 0 #9bb8ef28;
+}
+.hero-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #3b5379;
+  background: #1e3152;
+  color: #d6e5ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.hero-summary-header .file-mark { --accent: #aac9ff; }
+.hero-summary-body { padding: 16px 14px 18px; }
+.hero-summary-body h2 {
+  line-height: 1.35;
+  color: #f8fbff;
+  font-size: clamp(17px, 1.7vw, 22px);
+  letter-spacing: -0.045em;
+  word-break: keep-all;
+}
+.hero-summary-body p {
+  margin-top: 12px;
+  color: #d3dcf0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.hero-summary-body .hero-summary-folder {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 8px;
+  border: 1px solid #496ea6;
+  border-radius: 4px;
+  background: #233c65;
+  color: #e6efff;
+  font-size: 11px;
+  font-weight: 700;
+}
+.hero-summary-body .hero-summary-source {
+  padding-top: 8px;
+  border-top: 1px solid #364a6c;
+  color: #afc4e7;
+  font-size: 11px;
+}
+.hero-preview-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  padding-inline: 8px;
+  color: #bed0ec;
+  font-size: 12px;
+}
+.hero-playback {
+  border: 1px solid #536d98;
+  border-radius: 5px;
+  padding: 5px 9px;
+  color: #e9f0ff;
+  background: #192b49;
+  font: inherit;
+  cursor: pointer;
+}
+.hero-playback:hover { background: #2b4368; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+.product-demo { margin-top: clamp(32px, 6vw, 72px); }
+.product-demo .demo { margin-top: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-file {
+    transition: transform 290ms cubic-bezier(.2, .65, .3, 1), box-shadow 290ms ease;
+  }
+  .hero-stage[data-phase="filing"] .hero-file[aria-pressed="true"] {
+    transform: translate(8px, -4px);
+  }
+  .hero-stage[data-phase="filing"] .hero-summary-folder {
+    background: #325690;
+    box-shadow: 0 0 0 3px #7fa5ec28;
+  }
+  .hero-summary-body:not([hidden]) { animation: reveal-summary 240ms ease-out; }
+  @keyframes reveal-summary {
+    from { opacity: .25; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@media (max-width: 850px) {
+  .hero-layout {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    min-height: auto;
+  }
+  .hero-experience { width: min(100%, 660px); margin-inline: auto; }
+  .hero-stage { min-height: 290px; padding-block: 24px 16px; }
+}
+
+@media (max-width: 520px) {
+  .hero-layout { padding-block: 36px; }
+  .hero-stage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 5px 3px 14px;
+  }
+  .hero-stage::before { inset: 24px 0 50%; }
+  .hero-files { gap: 10px; padding: 0 3px; }
+  .hero-file { min-height: 56px; transform: none; margin-left: 0; }
+  .hero-file[aria-pressed="true"] { transform: translateY(-2px); }
+  .hero-summary { min-height: 218px; }
+  .hero-preview-caption { padding-inline: 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-file,
+  .hero-file[aria-pressed="true"] { transform: none; }
 }
 
 .download-group { margin: 24px auto 0; }
