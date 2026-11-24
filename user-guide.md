@@ -4,10 +4,24 @@ Docvia는 업무 문서를 보관하고, 검색하고, 요약과 오탈자 검�
 
 ## 설치하고 보관함 만들기
 
-1. [다운로드 페이지](https://jungyuoo.github.io/Docvia-downloads/#downloads)에서 운영체제에 맞는 설치 파일을 받습니다.
-2. Windows x64에서는 EXE를 실행하고 설치 마법사를 따라 진행합니다. 바탕화면 바로가기를 원하면 설치 중 해당 옵션을 선택합니다.
-3. macOS에서 DMG가 제공되면 배포 페이지의 대상 Mac을 확인합니다. DMG를 열고 **Docvia**를 **응용 프로그램** 폴더로 옮긴 뒤 실행합니다.
-4. 처음 실행하면 **보관함 위치 선택**을 누릅니다. 계속 사용할 위치를 고릅니다. Docvia는 문서를 가져올 때 그 아래의 보관함에 파일을 복사합니다.
+배포 페이지에서 내 기기에 맞는 설치 파일을 받습니다. [Docvia 다운로드](https://jungyuoo.github.io/Docvia-downloads/#downloads)
+
+### Windows x64
+
+EXE를 실행하고 설치 마법사를 따라 진행합니다. 바탕화면 바로가기가 필요하면 설치 중 해당 옵션을 선택합니다.
+
+배포 파일에는 게시자 인증서로 만든 서명이 없어 SmartScreen 경고가 표시될 수 있습니다. 공식 배포 페이지에서 받은 파일임을 확인한 경우, 경고창의 **추가 정보**를 눌러 **실행** 버튼이 표시되면 선택합니다. 관리 정책으로 실행이 제한된 기기에서는 IT 관리자에게 설치를 요청합니다. [Microsoft SmartScreen 안내](https://learn.microsoft.com/en-us/troubleshoot/microsoft-edge/development/ie-mode-blocks-addon)
+
+### macOS
+
+하나의 DMG에 Apple Silicon과 Intel용 실행 파일이 들어 있습니다. DMG를 열고 **Docvia**를 **응용 프로그램** 폴더로 끌어 놓은 뒤, 그 폴더에서 앱을 실행합니다.
+
+이 배포본은 Apple 공증 없이 제공됩니다. macOS가 개발자를 확인할 수 없다고 알리면 공식 배포 페이지에서 받은 파일임을 확인한 뒤 **시스템 설정 → 개인정보 보호 및 보안 → 그래도 열기**에서 Docvia 실행을 승인할 수 있습니다. [Apple의 앱 열기 안내](https://support.apple.com/ko-kr/102445)
+
+### 첫 실행
+
+**보관함 위치 선택**을 누르고 사용할 위치를 고릅니다. Docvia는 가져온 문서를 그 아래의 보관함에 복사합니다.
+
 
 ## 가져오기와 검색
 
