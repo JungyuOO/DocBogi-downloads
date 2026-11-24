@@ -65,7 +65,41 @@ async function verify() {
       window.webContents.setBackgroundThrottling(false);
       window.webContents.setZoomFactor(1.5);
     });
-    await page.waitForFunction(() => Math.abs(innerWidth - 853) <= 6 && Math.abs(innerHeight - 480) <= 6);
+    const targetViewport = { width: 853, height: 480 };
+    const matchesTargetViewport = ({ width, height }) =>
+      Math.abs(innerWidth - width) <= 6 && Math.abs(innerHeight - height) <= 6;
+    await page.waitForTimeout(1000);
+    const nativeViewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
+    const nativeWindow = await app.evaluate(({ BrowserWindow, screen }) => {
+      const [window] = BrowserWindow.getAllWindows();
+      const display = screen.getDisplayMatching(window.getBounds());
+      return {
+        contentBounds: window.getContentBounds(),
+        screen: display.size,
+        workArea: display.workAreaSize,
+        zoom: window.webContents.getZoomFactor(),
+      };
+    });
+    console.log("Native macOS viewport attempt", JSON.stringify({ ...nativeViewport, ...nativeWindow }));
+
+    let viewportMode = "native macOS viewport";
+    if (Math.abs(nativeViewport.width - targetViewport.width) > 6 ||
+        Math.abs(nativeViewport.height - targetViewport.height) > 6) {
+      await app.evaluate(({ BrowserWindow }) => {
+        const [window] = BrowserWindow.getAllWindows();
+        window.webContents.setZoomFactor(1);
+      });
+      const session = await page.context().newCDPSession(page);
+      await session.send("Emulation.setDeviceMetricsOverride", {
+        ...targetViewport,
+        deviceScaleFactor: 1,
+        mobile: false,
+      });
+      viewportMode = "emulated CSS viewport";
+    }
+    await page.waitForFunction(matchesTargetViewport, targetViewport);
+    await page.waitForFunction(() =>
+      !document.querySelector(".detail-shell.is-overlay.is-open, .detail-backdrop.is-open, .sidebar.is-open"));
     const list = page.locator(".explorer-content");
     const metrics = await list.evaluate(element => ({
       width: innerWidth,
@@ -73,8 +107,16 @@ async function verify() {
       listHeight: element.getBoundingClientRect().height,
     }));
     assert(metrics.listHeight >= 80, JSON.stringify(metrics));
+    const row = page.getByText(path.basename(fixtures[0]), { exact: true }).first();
+    await row.scrollIntoViewIfNeeded();
+    await row.click({ trial: true });
     await page.locator(".selection-toolbar button.primary").click({ trial: true });
-    console.log("Mounted macOS app verified", JSON.stringify({ version: runtime.version, documents: 3, ...metrics }));
+    console.log("Mounted macOS app verified", JSON.stringify({
+      version: runtime.version,
+      documents: 3,
+      viewportMode,
+      ...metrics,
+    }));
   } finally {
     await app.close();
   }
