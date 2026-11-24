@@ -1,4 +1,4 @@
-name: macOS 1.0.9 installer patch (manual)
+name: macOS 1.1.0 installer patch (manual)
 
 on:
   workflow_dispatch:
@@ -20,17 +20,17 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22.22.1
-      - name: Apply verified renderer delta and verify mounted installer
+      - name: Update verified bundle metadata and verify mounted installer
         shell: bash
         run: |
           set -euo pipefail
           work=$(cd "$RUNNER_TEMP" && pwd -P)
-          work=$(mktemp -d "$work/docvia-109.XXXXXXXX")
+          work=$(mktemp -d "$work/docvia-110.XXXXXXXX")
           base_mount="$work/base-mounted"
           final_mount="$work/final-mounted"
           volume="$work/volume"
           output="$GITHUB_WORKSPACE/release-output"
-          installer="$output/Docvia-1.0.9-mac-universal.dmg"
+          installer="$output/Docvia-1.1.0-mac-universal.dmg"
           base_attached=false
           final_attached=false
           cleanup() {
@@ -42,10 +42,10 @@ jobs:
 
           curl --fail --show-error --silent --location --retry 3 \
             --output "$work/base.dmg" \
-            https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.0.8/Docvia-1.0.8-mac-universal.dmg
+            https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.0.9/Docvia-1.0.9-mac-universal.dmg
           (
             cd "$work"
-            printf '%s  %s\n' 53c49f8b4e295d3d65b09d2f77501ff312148931899e4850dece20eff1b6a9ef base.dmg |
+            printf '%s  %s\n' a2008ae5a7876b8ede35f034fbbede281f3faa7e6e7dfc791c1131ee2a1769b5 base.dmg |
               shasum -a 256 -c -
           )
           hdiutil verify "$work/base.dmg"
@@ -65,7 +65,7 @@ jobs:
           bundle="$final_mount/Docvia.app"
           binary="$bundle/Contents/MacOS/Docvia"
           test "$(readlink "$final_mount/Applications")" = /Applications
-          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$bundle/Contents/Info.plist")" = 1.0.9
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$bundle/Contents/Info.plist")" = 1.1.0
           archs=$(lipo -archs "$binary" | tr ' ' '\n' | sort | xargs)
           test "$archs" = 'arm64 x86_64'
           codesign --verify --deep --strict "$bundle"
@@ -81,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: docvia-macos-universal
-          path: release-output/Docvia-1.0.9-mac-universal.dmg
+          path: release-output/Docvia-1.1.0-mac-universal.dmg
           if-no-files-found: error
           compression-level: 0
           retention-days: 7

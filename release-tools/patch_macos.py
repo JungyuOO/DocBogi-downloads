@@ -1,4 +1,4 @@
-"""Apply only the verified v1.0.9 renderer delta to a staged, released Docvia app."""
+"""Update version metadata on a staged, verified Docvia macOS app."""
 
 import argparse
 import hashlib
@@ -9,13 +9,10 @@ import subprocess
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-BASE_VERSION = "1.0.8"
-TARGET_VERSION = "1.0.9"
+BASE_VERSION = "1.0.9"
+TARGET_VERSION = "1.1.0"
 APP_ID = "com.docvia.desktop"
-OLD_MEDIA_RULE = b"(height<=460px){.workspace{overflow:hidden auto"
-NEW_MEDIA_RULE = b"(height<=600px){.workspace{overflow:hidden auto"
-RENDERER_PATH = re.compile(r"(?:index\.html|assets/[A-Za-z0-9_.-]+\.(?:js|css))")
-SHA256 = re.compile(r"[0-9a-f]{64}")
+RENDERER_TREE_SHA256 = "0ec2c2bd730028bfc208d3c69b8891319b296a9a6112e5b91d1a85ffeb5b66f6"
 
 
 def require(condition, message):
@@ -41,56 +38,6 @@ def renderer_tree(renderer):
 def tree_hash(entries):
     records = (f"{path}\0{entries[path]}\n" for path in sorted(entries))
     return sha256("".join(records).encode("utf-8"))
-
-
-def apply_delta(renderer, manifest):
-    base = renderer_tree(renderer)
-    require(tree_hash(base) == manifest["baseTree"], "Base renderer tree does not match")
-    changes = manifest["files"]
-    require(len(changes) == 5, "Expected exactly five modified renderer files")
-    old_paths = set()
-    new_paths = set()
-    renamed = {}
-    for change in changes:
-        old, new = change["old"], change["new"]
-        require(RENDERER_PATH.fullmatch(old) and RENDERER_PATH.fullmatch(new), "Unsafe renderer path")
-        require(old not in old_paths and new not in new_paths, "Duplicate delta path")
-        old_paths.add(old)
-        new_paths.add(new)
-        require(old in base and base[old] == change["before"], f"Base digest differs: {old}")
-        require(SHA256.fullmatch(change["after"]), f"Invalid expected digest: {new}")
-        if old != new:
-            require(old.startswith("assets/") and new.startswith("assets/"), "Only assets may be renamed")
-            require(Path(old).suffix == Path(new).suffix and new not in base, f"Unsafe rename: {new}")
-            renamed[Path(old).name.encode()] = Path(new).name.encode()
-        else:
-            require(old == "index.html", f"Expected a renamed asset: {old}")
-    require("index.html" in old_paths, "Delta is missing index.html")
-    rename_pattern = re.compile(b"|".join(re.escape(name) for name in sorted(renamed, key=len, reverse=True)))
-
-    prepared = {}
-    css_hits = 0
-    expected_tree = {path: digest for path, digest in base.items() if path not in old_paths}
-    for change in changes:
-        old, new = change["old"], change["new"]
-        content = (renderer / old).read_bytes()
-        require(sha256(content) == change["before"], f"Base file changed: {old}")
-        content = rename_pattern.sub(lambda match: renamed[match.group()], content)
-        if old.endswith(".css"):
-            css_hits += content.count(OLD_MEDIA_RULE)
-            content = content.replace(OLD_MEDIA_RULE, NEW_MEDIA_RULE)
-        require(sha256(content) == change["after"], f"Patched digest differs: {new}")
-        prepared[new] = content
-        expected_tree[new] = change["after"]
-    require(css_hits == 1, f"Expected one compact-layout rule, found {css_hits}")
-    require(tree_hash(expected_tree) == manifest["newTree"], "Expected renderer tree differs")
-
-    for relpath, content in prepared.items():
-        with (renderer / relpath).open("wb" if relpath == "index.html" else "xb") as destination:
-            destination.write(content)
-    for relpath in old_paths - new_paths:
-        (renderer / relpath).unlink()
-    require(tree_hash(renderer_tree(renderer)) == manifest["newTree"], "Final renderer tree differs")
 
 
 def update_bundle_version(bundle, accepted_id, root=False):
@@ -131,13 +78,12 @@ def update_app(app):
     raw_package = package.read_bytes()
     require(json.loads(raw_package).get("version") == BASE_VERSION, "Base package version differs")
     package_bytes, count = re.subn(
-        rb'("version"\s*:\s*)"1\.0\.8"', rb'\g<1>"1.0.9"', raw_package,
+        rb'("version"\s*:\s*)"1\.0\.9"', rb'\g<1>"1.1.0"', raw_package,
     )
     require(count == 1 and json.loads(package_bytes)["version"] == TARGET_VERSION, "Cannot update package version")
 
-    manifest = json.loads(Path(__file__).with_name("delta-1.0.9.json").read_text(encoding="utf-8"))
-    require(manifest["base"] == BASE_VERSION and manifest["version"] == TARGET_VERSION, "Delta versions differ")
-    apply_delta(resources / "dist" / "renderer", manifest)
+    renderer = resources / "dist" / "renderer"
+    require(tree_hash(renderer_tree(renderer)) == RENDERER_TREE_SHA256, "Base renderer tree does not match")
     package.write_bytes(package_bytes)
     frameworks = app / "Contents" / "Frameworks"
     for helper in sorted(frameworks.glob("Docvia Helper*.app")):
@@ -149,7 +95,8 @@ def update_app(app):
             resign(helper)
     update_bundle_version(app, lambda identifier: identifier == APP_ID, root=True)
     resign(app)
-    print(f"Applied verified renderer delta {BASE_VERSION} → {TARGET_VERSION}")
+    require(tree_hash(renderer_tree(renderer)) == RENDERER_TREE_SHA256, "Renderer changed during packaging")
+    print(f"Updated bundle metadata {BASE_VERSION} → {TARGET_VERSION} and verified the unchanged renderer")
 
 
 def create_fixtures(directory):
@@ -166,7 +113,7 @@ def create_fixtures(directory):
     for index in range(1, 4):
         document = f"""<?xml version="1.0" encoding="UTF-8"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:body><w:p><w:r><w:t>Docvia 1.0.9 layout fixture {index}</w:t></w:r></w:p></w:body>
+  <w:body><w:p><w:r><w:t>Docvia 1.1.0 layout fixture {index}</w:t></w:r></w:p></w:body>
 </w:document>"""
         with ZipFile(directory / f"layout-fixture-{index}.docx", "x", ZIP_DEFLATED) as archive:
             archive.writestr("[Content_Types].xml", types)

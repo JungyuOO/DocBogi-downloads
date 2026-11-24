@@ -28,7 +28,7 @@ async function verify() {
       packaged: app.isPackaged,
       appData: app.getPath("userData"),
     }));
-    assert.equal(runtime.version, "1.0.9");
+    assert.equal(runtime.version, "1.1.0");
     assert.equal(runtime.packaged, true);
     assert.equal(await fs.realpath(runtime.appData), await fs.realpath(data));
 
