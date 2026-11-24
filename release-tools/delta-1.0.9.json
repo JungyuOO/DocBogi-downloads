@@ -1,0 +1,38 @@
+{
+  "base": "1.0.8",
+  "version": "1.0.9",
+  "files": [
+    {
+      "old": "index.html",
+      "new": "index.html",
+      "before": "524fd21be8e55bb9bc6ae738ce0952f7188014e534decfa077a3f5bf5b11667b",
+      "after": "be3256cdfece661c6c9b57730b829246c4dfa9f9793c37be7eb44499c9ac0984"
+    },
+    {
+      "old": "assets/index-se-dnFRf.css",
+      "new": "assets/index-bztVz52P.css",
+      "before": "2624f2dd9ac5dbefb59f3d8a6ab1bd4226b20e61e7c021338bbffb04bbec61ce",
+      "after": "4316811f89bbbe3b79768eb37ae0b505349b29ed925967c4e73f96562b9f37e1"
+    },
+    {
+      "old": "assets/index-BTfIs72x.js",
+      "new": "assets/index-CJOxG7o-.js",
+      "before": "a36fabe44466b0198a542281a53897a3ada18d78a57dad26492dab6547e5c16f",
+      "after": "b952b7493201be0febad586970f78e4b96f59111e042e0c58498643234b1948f"
+    },
+    {
+      "old": "assets/DocumentWorkbench-BlihuEYd.js",
+      "new": "assets/DocumentWorkbench-Cx_DHAuF.js",
+      "before": "41995a7c04182c97b39fbbdcc682008a63627855253cdfef62b399e077d505ee",
+      "after": "2f8eb964974ae70453c461b53642f2272cb5e71a87ea3b56760dab50e5003cf3"
+    },
+    {
+      "old": "assets/Tooltip-BPPCvbOq.js",
+      "new": "assets/Tooltip-Dc5tDGnZ.js",
+      "before": "d9991ac307d5e1688c02ec901c2e497a29a8da86d54883ebbf8d76d4a476ac3e",
+      "after": "8b0e660b032bcdf319b54ea0903c89b0a4401af7c9f98fec97d172609de9fd82"
+    }
+  ],
+  "baseTree": "1352711183319d4c1b41979d6e3f7a39974a9107d9e206a9f01d93c4134da0f7",
+  "newTree": "0ec2c2bd730028bfc208d3c69b8891319b296a9a6112e5b91d1a85ffeb5b66f6"
+}
