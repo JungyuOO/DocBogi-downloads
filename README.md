@@ -6,7 +6,7 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세�
 
 [다운로드](https://jungyuoo.github.io/Docvia-downloads/#downloads) · [사용 가이드](user-guide.md) · [지원 형식](#지원-형식)
 
-[![Docvia에서 파일을 가져와 회의록을 검색하고, 요약을 확인한 뒤 수정 사본을 저장하는 화면](media/docvia-demo.webp)](media/docvia-intro.mp4)
+[![Docvia에서 파일을 가져와 회의록을 검색하고, 요약을 확인한 뒤 수정 사본을 저장하는 화면](media/docvia-workflow.webp)](media/docvia-intro.mp4)
 
 데모의 분류와 요약은 시연용입니다. [전체 영상 재생](media/docvia-intro.mp4)
 
