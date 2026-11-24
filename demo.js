@@ -16,10 +16,9 @@ if (demo) {
 }
 
 const preview = document.querySelector("[data-document-preview]");
-const playback = document.querySelector("[data-preview-playback]");
 const previewStatus = document.querySelector("[data-preview-status]");
 
-if (preview && playback && previewStatus) {
+if (preview && previewStatus) {
   const files = [...preview.querySelectorAll("button[aria-controls]")];
   const summaries = files.map(file => document.getElementById(file.getAttribute("aria-controls")));
   let selected = 0;
@@ -27,7 +26,6 @@ if (preview && playback && previewStatus) {
   let filingEffect;
   let pointerInside = false;
   let focusInside = preview.contains(document.activeElement);
-  let userPaused = motionPreference.matches;
   let visible = true;
 
   function selectDocument(index, automatic = false) {
@@ -55,8 +53,7 @@ if (preview && playback && previewStatus) {
 
   function refreshPlayback() {
     window.clearTimeout(nextPreview);
-    playback.textContent = userPaused ? "자동 시연 재생" : "자동 시연 일시정지";
-    if (userPaused || pointerInside || focusInside || !visible || document.hidden) return;
+    if (motionPreference.matches || pointerInside || focusInside || !visible || document.hidden) return;
 
     nextPreview = window.setTimeout(() => {
       selectDocument((selected + 1) % files.length, true);
@@ -84,34 +81,24 @@ if (preview && playback && previewStatus) {
   });
 
   files.forEach((file, index) => {
-    let touchActivation = false;
     file.addEventListener("pointerenter", event => {
       if (event.pointerType !== "touch") selectDocument(index);
     });
     file.addEventListener("focus", () => selectDocument(index));
-    file.addEventListener("pointerdown", event => {
-      touchActivation = event.pointerType === "touch";
-    });
-    file.addEventListener("pointercancel", () => {
-      touchActivation = false;
-    });
-    file.addEventListener("click", event => {
-      // A tap keeps the preview available even in browsers where it does not set focus.
-      if (event.detail > 0 && (event.pointerType === "touch" || touchActivation)) userPaused = true;
-      touchActivation = false;
-      selectDocument(index);
-      refreshPlayback();
+    file.addEventListener("click", () => {
+      // Some touch browsers do not focus buttons by default.
+      if (document.activeElement !== file) file.focus({ preventScroll: true });
+      else selectDocument(index);
     });
   });
 
-  playback.addEventListener("click", () => {
-    userPaused = !userPaused;
-    refreshPlayback();
+  document.addEventListener("pointerdown", event => {
+    if (event.pointerType === "touch" && focusInside && !preview.contains(event.target)) {
+      document.activeElement.blur();
+    }
   });
-  motionPreference.addEventListener("change", event => {
-    if (event.matches) userPaused = true;
-    refreshPlayback();
-  });
+  motionPreference.addEventListener("change", refreshPlayback);
+
   document.addEventListener("visibilitychange", refreshPlayback);
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([entry]) => {
@@ -120,8 +107,7 @@ if (preview && playback && previewStatus) {
     }).observe(preview);
   }
 
-  playback.hidden = false;
-  if (!userPaused && !document.hidden) selectDocument(0, true);
+  if (!motionPreference.matches && !document.hidden) selectDocument(0, true);
   refreshPlayback();
 }
 

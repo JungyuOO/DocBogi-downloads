@@ -285,25 +285,10 @@ nav a { text-decoration: none; color: var(--muted); font-size: 14px; }
   font-size: 11px;
 }
 .hero-preview-caption {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px 14px;
   padding-inline: 8px;
   color: #bed0ec;
   font-size: 12px;
 }
-.hero-playback {
-  border: 1px solid #536d98;
-  border-radius: 5px;
-  padding: 5px 9px;
-  color: #e9f0ff;
-  background: #192b49;
-  font: inherit;
-  cursor: pointer;
-}
-.hero-playback:hover { background: #2b4368; }
 .visually-hidden {
   position: absolute;
   width: 1px;
