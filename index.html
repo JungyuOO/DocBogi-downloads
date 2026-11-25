@@ -6,7 +6,7 @@
   <meta name="description" content="Docvia에서 업무 문서를 찾아 요약과 검수 결과를 확인하고, 문서 작업실에서 수정한 사본을 저장하세요.">
   <meta name="color-scheme" content="light">
   <link rel="icon" href="media/icon.png?v=3" type="image/png">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
   <script src="demo.js?v=9" defer></script>
   <title>Docvia · 업무 문서 관리 앱</title>
 </head>
@@ -32,18 +32,18 @@
       <div class="container hero-layout">
         <div class="hero-copy">
           <h1 id="hero-title">흩어진 문서,<br><em>필요한 순간에.</em></h1>
-          <p class="hero-description">내 PC에 업무 문서를 모으고, 필요한 내용을 바로 찾으세요. 연결한 AI로 요약과 오탈자를 확인하고, 수정한 문서는 사본으로 저장할 수 있습니다.</p>
+          <p class="hero-description">내 PC에 업무 문서를 모으고, 필요한 내용을 바로 찾으세요. 연결한 AI로 요약과 오탈자를 확인하고, 수정한 문서는 원본과 같은 형식의 사본으로 저장할 수 있습니다.</p>
 
           <section class="download-group" id="downloads" aria-label="운영체제별 다운로드" aria-describedby="download-status">
             <div class="platforms">
-              <a class="platform" href="https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.1/Docvia-Setup-1.1.1-x64.exe" aria-label="Windows x64 EXE 다운로드">
+              <a class="platform" href="https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.2/Docvia-Setup-1.1.2-x64.exe" aria-label="Windows x64 EXE 다운로드">
                 <span>Windows</span><small>x64 · EXE</small>
               </a>
-              <a class="platform" href="https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.1/Docvia-1.1.1-mac-universal.dmg" aria-label="macOS Apple Silicon 및 Intel 공용 DMG 다운로드">
+              <a class="platform" href="https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.2/Docvia-1.1.2-mac-universal.dmg" aria-label="macOS Apple Silicon 및 Intel 공용 DMG 다운로드">
                 <span>macOS</span><small>Universal · DMG</small>
               </a>
             </div>
-            <p id="download-status">v1.1.1 · <a href="https://github.com/JungyuOO/Docvia-downloads/blob/main/user-guide.md">사용 가이드</a> · <a href="https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.1.1">SHA-256 확인</a></p>
+            <p id="download-status">v1.1.2 · <a href="https://github.com/JungyuOO/Docvia-downloads/blob/main/user-guide.md">사용 가이드</a> · <a href="https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.1.2">SHA-256 확인</a></p>
           </section>
         </div>
 
@@ -122,7 +122,7 @@
           </video>
         </div>
         <figcaption id="demo-caption">
-          <span>실제 Docvia 화면 · 예제 문서, 분류와 요약 시연</span>
+          <span>예제 문서 분류와 요약 시연 · 이전 메뉴 배치</span>
           <a href="media/docvia-intro.mp4?v=5">영상 열기 <span aria-hidden="true">↗</span></a>
         </figcaption>
       </figure>
@@ -174,12 +174,33 @@
       <article class="detail">
         <div class="detail-copy">
           <h3>작업실에서 고친 문서는<br>사본으로 저장하세요</h3>
-          <p>본문을 직접 고치거나 수정안을 검토하고, 변경 전후를 비교하세요. 적용한 내용은 새 파일로 저장할 수 있습니다.</p>
+          <p>본문을 직접 고치거나 수정안을 검토하고, 변경 전후를 비교하세요. <strong>문서 사본 저장</strong>을 누르면 원본과 같은 형식의 새 파일을 만들 수 있습니다.</p>
         </div>
         <div class="detail-image detail-image-edit">
           <img src="media/edit-detail.jpg?v=3" loading="lazy" alt="문단의 수정 전후와 사본 저장 결과가 표시된 Docvia 작업실">
         </div>
       </article>
+    </section>
+
+    <section class="workflows container" aria-labelledby="navigation-title">
+      <h2 id="navigation-title">자주 쓰는 화면과 내 폴더를 먼저</h2>
+      <figure class="navigation-preview">
+        <img src="media/library-112.webp" loading="lazy" alt="Docvia v1.1.2 문서함에서 기본 메뉴 바로 아래에 내 폴더가 보이는 화면">
+      </figure>
+      <dl class="workflow-list">
+        <div>
+          <dt>문서와 폴더 찾기</dt>
+          <dd>왼쪽 위에는 <strong>전체 문서, 최근 문서, 즐겨찾기, 자동 정리함, 검토할 문서, 문서 작업실</strong>이 있습니다. 바로 아래 <strong>내 폴더</strong>에서 보관함을 탐색하세요.</dd>
+        </div>
+        <div>
+          <dt>업무 도구</dt>
+          <dd>폴더 아래의 <strong>업무 도구</strong>를 펼치면 업무대장, 기한·알림, 업무 자동화를 열 수 있습니다. 여러 폴더에 있는 파일은 <strong>프로젝트 모음</strong>에 연결하세요.</dd>
+        </div>
+        <div>
+          <dt>분류 규칙과 처리 상태</dt>
+          <dd><strong>자동 정리함</strong> 화면 위에서 <strong>자동 분류 규칙</strong>을 편집하고, 상태 표시줄의 <strong>처리 현황</strong>에서 추출·분석의 진행 상태와 실패한 작업을 확인하세요. <a href="https://github.com/JungyuOO/Docvia-downloads/blob/main/user-guide.md#왼쪽-메뉴와-작업-상태">메뉴 위치 안내</a></dd>
+        </div>
+      </dl>
     </section>
 
     <section class="workflows container" aria-labelledby="contract-workflows-title">

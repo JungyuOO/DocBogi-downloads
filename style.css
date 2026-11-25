@@ -561,6 +561,19 @@ a.platform:hover { background: #1739ad; border-color: #1739ad; }
   letter-spacing: -0.05em;
   word-break: keep-all;
 }
+.navigation-preview {
+  margin: 22px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--plate);
+}
+.navigation-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .workflow-list {
   margin: 20px 0 0;
   border-top: 1px solid var(--line);
