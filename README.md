@@ -1,25 +1,25 @@
-# Docvia
+# DocBogi (독보기)
 
 **업무 문서를 정리하고, 검색하고, 검토하는 데스크톱 앱.**
 
 PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세요. 파일명과 본문으로 찾아 요약과 오탈자 후보를 확인하고, 문서 작업실에서 고친 내용을 새 파일로 저장할 수 있습니다.
 
-[다운로드](https://jungyuoo.github.io/Docvia-downloads/#downloads) · [사용 가이드](user-guide.md) · [지원 형식](#지원-형식)
+[다운로드](https://jungyuoo.github.io/DocBogi-downloads/#downloads) · [사용 가이드](user-guide.md) · [지원 형식](#지원-형식)
 
-[![Docvia에서 파일을 가져와 회의록을 검색하고, 요약을 확인한 뒤 수정 사본을 저장하는 화면](media/docvia-workflow.webp)](media/docvia-intro.mp4)
+[![DocBogi에서 파일을 가져와 회의록을 검색하고, 요약을 확인한 뒤 수정 사본을 저장하는 화면](media/docvia-workflow.webp)](media/docvia-intro.mp4)
 
-데모에는 예제 문서와 이전 메뉴 배치를 사용했습니다. [전체 영상 재생](media/docvia-intro.mp4)
+데모에는 예제 문서와 이름 변경 전 화면을 사용했습니다. [전체 영상 재생](media/docvia-intro.mp4)
 
 ## 설치
 
 | 운영체제 | 설치 파일 | 설치 방법 |
 | --- | --- | --- |
-| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.2/Docvia-Setup-1.1.2-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
-| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.2/Docvia-1.1.2-mac-universal.dmg) | DMG를 열어 Docvia를 **응용 프로그램**으로 옮겨 실행합니다. |
+| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.2/Docvia-Setup-1.1.2-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
+| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.2/Docvia-1.1.2-mac-universal.dmg) | DMG를 열어 앱을 **응용 프로그램**으로 옮겨 실행합니다. |
 
 **v1.1.2 수정 배포 · 2026-11-25.** 사내 Qwen의 업무대장 추출과 근거 확인, 좁은 화면의 작업실 도구 모음을 개선했습니다. 기존 v1.1.2 사용자는 위 설치 파일을 다시 받아 갱신할 수 있습니다.
 
-배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.1.2) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
+v1.1.2 설치 파일과 실행 화면에는 이전 이름인 Docvia가 표시됩니다. 배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.2) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
 
 ## v1.1.2에서 메뉴 찾기
 
@@ -36,7 +36,7 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세�
 
 ## 빠른 시작
 
-1. Docvia를 실행하고 **보관함 위치 선택**에서 저장할 위치를 고릅니다.
+1. DocBogi를 실행하고 **보관함 위치 선택**에서 저장할 위치를 고릅니다.
 2. 왼쪽 **내 폴더 → 보관함** 아래에 **회의록**, **운영 계획**, **업무 일정** 폴더를 만듭니다.
 3. **전체 문서**에서 **문서 추가**를 누르거나 아래 예시처럼 업무 파일을 끌어 놓습니다. 처음에는 대상 폴더를 열고 파일을 추가해 직접 정리해 보세요.
 4. 검색창에 **회의록**을 입력하고 문서를 선택합니다. AI를 연결했다면 **요약·검수 실행**을 누르고 오른쪽 **요약**, **검수** 탭에서 결과를 확인합니다.
@@ -69,11 +69,11 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세�
 | 기한 관리 | **기한·알림**에서 계약 종료일과 통보 조건을 확인하고 개인 알림일을 설정합니다. 영업일 조건처럼 계산 기준이 애매하면 실제 통보일을 먼저 확정합니다. |
 | 인수인계 | 프로젝트에서 **인수인계 만들기**를 열고 문서와 첨부를 선택합니다. 확인한 근거와 메모를 HTML로 정리해 선택한 첨부와 함께 ZIP으로 저장합니다. |
 
-설치본의 제공 상태는 [공식 릴리스](https://github.com/JungyuOO/Docvia-downloads/releases/latest)에서 확인할 수 있습니다. [업무대장 사용 가이드](user-guide.md#문서를-업무대장에-기록하기)
+설치본의 제공 상태는 [공식 릴리스](https://github.com/JungyuOO/DocBogi-downloads/releases/latest)에서 확인할 수 있습니다. [업무대장 사용 가이드](user-guide.md#문서를-업무대장에-기록하기)
 
 ## 반복해서 쓰는 업무 기능
 
-| 하고 싶은 일 | Docvia에서 하는 방법 |
+| 하고 싶은 일 | DocBogi에서 하는 방법 |
 | --- | --- |
 | 여러 폴더에 흩어진 자료를 한 번에 열기 | **프로젝트 모음**을 만들고 문서를 선택해 **프로젝트에 연결**합니다. 예를 들어 **분기 운영** 모음에 회의록과 일정표를 함께 연결할 수 있습니다. 문서 한 건은 여러 모음에 연결할 수 있습니다. |
 | 자주 쓰는 검색과 필터 다시 열기 | 문서 형식, 업무 상태, 태그 등 필요한 조건을 설정하고 **보기 저장**을 누릅니다. 다음에 열면 새로 조건을 충족한 문서도 나타납니다. |
@@ -96,7 +96,7 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세�
 
 | 제공자 | 연결 방법 |
 | --- | --- |
-| Codex | **브라우저로 연결**을 눌러 계정에 로그인합니다. Docvia가 공식 연결 도구를 준비합니다. 문서 작업실의 AI 요청에도 사용합니다. |
+| Codex | **브라우저로 연결**을 눌러 계정에 로그인합니다. DocBogi가 공식 연결 도구를 준비합니다. 문서 작업실의 AI 요청에도 사용합니다. |
 | Claude API | 프로필에 모델명과 API 키를 입력합니다. 시각 자료 분석에는 이미지 입력을 지원하는 모델을 사용합니다. |
 | OpenAI 호환 서버 | 서버 기본 주소 또는 Chat Completions 요청 주소를 입력합니다. 서버가 요구하는 모델명과 API 키를 추가합니다. |
 
