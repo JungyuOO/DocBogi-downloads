@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="DocBogi에서 업무 문서를 찾아 요약과 검수 결과를 확인하고, 문서 작업실에서 수정한 사본을 저장하세요.">
+  <meta name="description" content="DocBogi에서 업무 문서를 찾고, 원문에서 확인한 기한을 업무 캘린더에 등록하세요. 일정에서 근거가 되는 문장으로 돌아갈 수 있습니다.">
   <meta name="color-scheme" content="light">
   <link rel="icon" href="media/icon.png?v=3" type="image/png">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=12">
   <script src="demo.js?v=9" defer></script>
   <title>DocBogi · 업무 문서 관리 앱</title>
 </head>
@@ -31,8 +31,8 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="container hero-layout">
         <div class="hero-copy">
-          <h1 id="hero-title">흩어진 문서,<br><em>필요한 순간에.</em></h1>
-          <p class="hero-description">내 PC에 업무 문서를 모으고, 필요한 내용을 바로 찾으세요. 연결한 AI로 요약과 오탈자를 확인하고, 수정한 문서는 원본과 같은 형식의 사본으로 저장할 수 있습니다.</p>
+          <h1 id="hero-title">문서 기한을<br><em>캘린더에.</em></h1>
+          <p class="hero-description">업무 파일을 내 PC에 모아 파일명과 본문으로 찾으세요. 원문에서 확인한 제출 마감을 업무 캘린더에 등록하고, 일정에서 해당 문장으로 돌아갈 수 있습니다.</p>
 
           <section class="download-group" id="downloads" aria-label="운영체제별 다운로드" aria-describedby="download-status">
             <div class="platforms">
@@ -43,31 +43,31 @@
                 <span>macOS</span><small>Universal · DMG</small>
               </a>
             </div>
-            <p id="download-status">v1.1.3 · <a href="https://github.com/JungyuOO/DocBogi-downloads/blob/main/user-guide.md">사용 가이드</a> · <a href="https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.3">SHA-256 확인</a><br><time datetime="2026-11-25">2026-11-25</time> 배포 · 업무 캘린더와 키보드로 선택할 수 있는 검색 필터 추가</p>
+            <p id="download-status">v1.1.3 · <a href="https://github.com/JungyuOO/DocBogi-downloads/blob/main/user-guide.md">사용 가이드</a> · <a href="https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.3">SHA-256 확인</a><br><time datetime="2026-11-25">2026-11-25</time> 배포 · 업무 캘린더와 키보드로 고르는 검색 필터</p>
           </section>
         </div>
 
         <figure class="hero-experience" aria-labelledby="preview-caption">
           <div class="hero-stage" data-document-preview>
             <div class="hero-files" role="group" aria-label="미리 볼 예제 문서">
-              <button class="hero-file hero-file-word" type="button" aria-pressed="true" aria-controls="preview-minutes">
-                <span class="hero-file-icon" aria-hidden="true">W</span>
-                <span class="hero-file-text">
-                  <span class="hero-file-name">주간 업무 회의록.docx</span>
-                  <span class="hero-file-route"><span aria-hidden="true">↳</span> 회의록</span>
-                </span>
-              </button>
-              <button class="hero-file hero-file-slides" type="button" aria-pressed="false" aria-controls="preview-plan">
+              <button class="hero-file" type="button" aria-pressed="true" aria-controls="preview-proposal">
                 <span class="hero-file-icon" aria-hidden="true">P</span>
                 <span class="hero-file-text">
-                  <span class="hero-file-name">분기 운영 계획.pptx</span>
-                  <span class="hero-file-route"><span aria-hidden="true">↳</span> 운영 계획</span>
+                  <span class="hero-file-name">운영지원 제안요청서.pdf</span>
+                  <span class="hero-file-route"><span aria-hidden="true">↳</span> 제안 자료</span>
                 </span>
               </button>
-              <button class="hero-file hero-file-sheet" type="button" aria-pressed="false" aria-controls="preview-schedule">
+              <button class="hero-file hero-file-contract" type="button" aria-pressed="false" aria-controls="preview-contract">
+                <span class="hero-file-icon" aria-hidden="true">W</span>
+                <span class="hero-file-text">
+                  <span class="hero-file-name">유지보수 계약서.docx</span>
+                  <span class="hero-file-route"><span aria-hidden="true">↳</span> 계약 자료</span>
+                </span>
+              </button>
+              <button class="hero-file hero-file-sheet" type="button" aria-pressed="false" aria-controls="preview-internal">
                 <span class="hero-file-icon" aria-hidden="true">X</span>
                 <span class="hero-file-text">
-                  <span class="hero-file-name">업무 일정표.xlsx</span>
+                  <span class="hero-file-name">내부 검토 일정.xlsx</span>
                   <span class="hero-file-route"><span aria-hidden="true">↳</span> 업무 일정</span>
                 </span>
               </button>
@@ -76,31 +76,31 @@
             <div class="hero-summary">
               <div class="hero-summary-header">
                 <span class="file-mark" aria-hidden="true"></span>
-                문서 미리보기
+                문서 속 기한 예시
               </div>
-              <div class="hero-summary-body" id="preview-minutes">
-                <h2>주간 업무 회의록</h2>
-                <p class="hero-summary-folder">회의록 폴더</p>
-                <p>신규 고객 교육은 목요일에 진행합니다. 운영팀 검토본은 수요일까지 공유하기로 했습니다.</p>
-                <p class="hero-summary-source">2쪽 · 결정 사항</p>
+              <div class="hero-summary-body" id="preview-proposal">
+                <h2>제안서 제출 마감</h2>
+                <p class="hero-summary-folder">제안 자료 폴더</p>
+                <p>12월 18일 오후 4시까지 제안서를 제출합니다.</p>
+                <p class="hero-summary-source">제안요청서 · 제출 안내</p>
               </div>
-              <div class="hero-summary-body" id="preview-plan" hidden>
-                <h2>분기 운영 계획</h2>
-                <p class="hero-summary-folder">운영 계획 폴더</p>
-                <p>시범 운영 뒤 사용자 의견을 수집하고, 분기 말에 운영 지표와 개선 항목을 검토합니다.</p>
-                <p class="hero-summary-source">4쪽 · 운영 일정</p>
+              <div class="hero-summary-body" id="preview-contract" hidden>
+                <h2>유지보수 계약 종료</h2>
+                <p class="hero-summary-folder">계약 자료 폴더</p>
+                <p>유지보수 계약은 3월 31일에 끝납니다.</p>
+                <p class="hero-summary-source">계약서 · 계약 기간</p>
               </div>
-              <div class="hero-summary-body" id="preview-schedule" hidden>
-                <h2>업무 일정표</h2>
+              <div class="hero-summary-body" id="preview-internal" hidden>
+                <h2>제안서 내부 검토</h2>
                 <p class="hero-summary-folder">업무 일정 폴더</p>
-                <p>제안서 내부 검토는 화요일, 고객 전달은 금요일로 예정되어 있습니다.</p>
-                <p class="hero-summary-source">일정 시트 · 8~9행</p>
+                <p>12월 15일 오전 10시에 제안서 초안을 검토합니다.</p>
+                <p class="hero-summary-source">일정표 · 내부 검토 항목</p>
               </div>
             </div>
           </div>
 
           <figcaption class="hero-preview-caption">
-            <p id="preview-caption">예제 문서를 가리키거나 선택하면 요약과 분류를 볼 수 있습니다.</p>
+            <p id="preview-caption">예제 문서를 선택해 날짜와 출처를 살펴보세요.</p>
           </figcaption>
           <p class="visually-hidden" role="status" data-preview-status></p>
         </figure>
@@ -111,82 +111,56 @@
       <figure class="demo" id="demo">
         <div class="demo-tab">
           <span class="file-mark" aria-hidden="true"></span>
-          DocBogi 사용 화면
+          제안서 마감 등록 · 24초
         </div>
         <div class="demo-frame">
           <video controls muted loop playsinline preload="metadata"
-                 poster="media/poster.jpg?v=5" aria-label="DocBogi 사용 영상" aria-describedby="demo-caption">
-            <source src="media/docvia-intro.mp4?v=5" type="video/mp4">
-            <track kind="captions" src="media/intro.ko.vtt?v=3" srclang="ko" label="한국어">
-            <a href="media/docvia-intro.mp4?v=5">영상 파일 열기</a>
+                 poster="media/docbogi-113-poster.jpg" aria-label="DocBogi v1.1.3에서 제안서 제출 마감을 등록하는 영상" aria-describedby="demo-caption">
+            <source src="media/docbogi-113.mp4" type="video/mp4">
+            <track kind="captions" src="media/docbogi-113.ko.vtt" srclang="ko" label="한국어">
+            <a href="media/docbogi-113.mp4">영상 파일 열기</a>
           </video>
         </div>
         <figcaption id="demo-caption">
-          <span>예제 문서 분류와 요약 시연 · 이전 메뉴 배치</span>
-          <a href="media/docvia-intro.mp4?v=5">영상 열기 <span aria-hidden="true">↗</span></a>
+          <span>DocBogi v1.1.3에서 예제 제안요청서의 제출 마감을 등록하고 월간 일정에서 원문을 엽니다.</span>
+          <a href="media/docbogi-113.mp4">영상 열기 <span aria-hidden="true">↗</span></a>
         </figcaption>
       </figure>
     </section>
 
     <section class="details container" id="details" aria-labelledby="details-title">
-      <h2 id="details-title">문서를 고르는 순간부터 사본을 저장할 때까지</h2>
+      <h2 id="details-title">문서 찾기부터 일정과 원문 확인까지</h2>
       <article class="detail">
         <div class="detail-copy">
-          <h3>한꺼번에 가져온 문서를<br>업무별 폴더로 정리</h3>
-          <p>기본 AI를 연결하고 자동 폴더 정리를 켜면, 분류 근거가 충분한 새 문서를 기존 폴더로 옮깁니다. 분류가 애매하면 <strong>검토할 문서</strong>에서 확인하고, 보관할 곳을 이미 정했다면 해당 폴더에서 바로 추가할 수 있습니다.</p>
+          <h3>보관함에서 필요한 문서를 찾으세요</h3>
+          <p>PDF, Word, PowerPoint, Excel, 한글 문서를 가져와 업무별 폴더에 정리하고 파일명과 본문으로 검색하세요. AI를 연결하면 문서를 선택해 요약과 오탈자 후보도 확인할 수 있습니다.</p>
         </div>
-        <figure class="route-example">
-          <figcaption>업무 문서 3개를 정리하는 예시</figcaption>
-          <table class="route-table">
-            <thead>
-              <tr>
-                <th scope="col">가져온 문서</th>
-                <th scope="col">자동 분류 결과</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="route-file"><span class="route-kind kind-word" aria-hidden="true">W</span><span>주간 업무 회의록.docx</span></span></td>
-                <td><span class="route-destination"><span class="route-arrow" aria-hidden="true">→</span>회의록</span></td>
-              </tr>
-              <tr>
-                <td><span class="route-file"><span class="route-kind kind-slides" aria-hidden="true">P</span><span>분기 운영 계획.pptx</span></span></td>
-                <td><span class="route-destination"><span class="route-arrow" aria-hidden="true">→</span>운영 계획</span></td>
-              </tr>
-              <tr>
-                <td><span class="route-file"><span class="route-kind kind-sheet" aria-hidden="true">X</span><span>업무 일정표.xlsx</span></span></td>
-                <td><span class="route-destination"><span class="route-arrow" aria-hidden="true">→</span>업무 일정</span></td>
-              </tr>
-            </tbody>
-          </table>
-          <p>보관함에 미리 만든 폴더를 기준으로 한 시연입니다.</p>
-        </figure>
+        <a class="detail-image" href="media/library-113.webp">
+          <img src="media/library-113.webp" loading="lazy" alt="DocBogi 보관함의 폴더와 업무 문서 목록">
+        </a>
       </article>
       <article class="detail">
         <div class="detail-copy">
-          <h3>파일을 열기 전에<br>요약과 검수 결과를 확인하세요</h3>
-          <p>PDF, Word, PowerPoint, Excel, 한글 문서를 가져와 폴더를 직접 정하거나 연결한 AI로 분류합니다. 파일명과 본문으로 검색한 뒤 문서 설명에서 요약과 위치별 오탈자 후보를 확인할 수 있습니다.</p>
+          <h3>원문에서 확인한 마감을 일정으로 저장하세요</h3>
+          <p>문서에서 <strong>캘린더에 추가</strong>를 누르면 날짜 후보가 표시됩니다. 제출 일시와 인용문을 확인해 저장하고 월간 또는 목록 보기에서 다른 업무 일정과 함께 살펴보세요.</p>
         </div>
-        <div class="detail-image detail-image-summary">
-          <img src="media/summary-detail.jpg?v=3" loading="lazy" alt="검색한 회의록의 설명 패널에 AI 요약이 보이는 DocBogi 화면">
-        </div>
+        <a class="detail-image" href="media/calendar-113.webp">
+          <img src="media/calendar-113.webp" loading="lazy" alt="제안서 제출 마감이 등록된 DocBogi 업무 캘린더 월간 보기">
+        </a>
       </article>
       <article class="detail">
         <div class="detail-copy">
-          <h3>작업실에서 고친 문서는<br>사본으로 저장하세요</h3>
-          <p>본문을 직접 고치거나 수정안을 검토하고, 변경 전후를 비교하세요. <strong>문서 사본 저장</strong>을 누르면 원본과 같은 형식의 새 파일을 만들 수 있습니다.</p>
+          <h3>일정에서 근거가 되는 문장으로 돌아가세요</h3>
+          <p>저장한 일정에서 <strong>원문 위치 열기</strong>를 누르면 문서 작업실에 근거가 표시됩니다. 작업실에서 편집을 지원하는 문서는 문단이나 셀의 텍스트를 고쳐 같은 형식의 사본으로 저장할 수 있습니다.</p>
         </div>
-        <div class="detail-image detail-image-edit">
-          <img src="media/edit-detail.jpg?v=3" loading="lazy" alt="문단의 수정 전후와 사본 저장 결과가 표시된 DocBogi 작업실">
-        </div>
+        <a class="detail-image" href="media/evidence-113.webp">
+          <img src="media/evidence-113.webp" loading="lazy" alt="DocBogi 문서 작업실에서 제안서 제출 마감 근거가 강조된 원문">
+        </a>
       </article>
     </section>
 
     <section class="workflows container" aria-labelledby="navigation-title">
-      <h2 id="navigation-title">자주 쓰는 화면과 내 폴더를 먼저</h2>
-      <figure class="navigation-preview">
-        <img src="media/library-112.webp" loading="lazy" alt="Docvia v1.1.2 문서함에서 기본 메뉴 바로 아래에 내 폴더가 보이는 화면">
-      </figure>
+      <h2 id="navigation-title">보관함 메뉴와 업무 도구</h2>
       <dl class="workflow-list">
         <div>
           <dt>문서와 폴더 찾기</dt>
@@ -197,8 +171,8 @@
           <dd>폴더 아래의 <strong>업무 도구</strong>를 펼치면 업무대장, 업무 캘린더, 업무 자동화를 열 수 있습니다. 여러 폴더에 있는 파일은 <strong>프로젝트 모음</strong>에 연결하세요.</dd>
         </div>
         <div>
-          <dt>분류 규칙과 처리 상태</dt>
-          <dd><strong>자동 정리함</strong> 화면 위에서 <strong>자동 분류 규칙</strong>을 편집하고, 상태 표시줄의 <strong>처리 현황</strong>에서 추출·분석의 진행 상태와 실패한 작업을 확인하세요. <a href="https://github.com/JungyuOO/DocBogi-downloads/blob/main/user-guide.md#왼쪽-메뉴와-작업-상태">메뉴 위치 안내</a></dd>
+          <dt>자동 분류와 처리 현황</dt>
+          <dd>기본 AI를 연결하고 자동 폴더 정리를 켜면 분류 근거가 충분한 새 문서가 기존 폴더로 이동합니다. <strong>자동 정리함</strong>에서 규칙을 편집하고 하단 <strong>처리 현황</strong>에서 진행 중이거나 실패한 작업을 확인하세요. <a href="https://github.com/JungyuOO/DocBogi-downloads/blob/main/user-guide.md#왼쪽-메뉴와-작업-상태">메뉴 위치 안내</a></dd>
         </div>
       </dl>
     </section>
@@ -216,11 +190,11 @@
         </div>
         <div>
           <dt>업무 자동화</dt>
-          <dd>문서가 들어오면 정한 조건에 따라 대장에 행을 추가하거나 검토를 요청할 수 있습니다. 실행 전에 어떤 작업을 수행하고 AI에 무엇을 전송하는지 확인하세요.</dd>
+          <dd>문서가 들어오면 정한 조건에 따라 대장에 행을 추가하거나 검토를 요청합니다. 실행 미리보기에서 작업 순서와 AI 전송 여부를 확인하고, 실행 기록에서 실패한 단계를 다시 시도할 수 있습니다.</dd>
         </div>
         <div>
-          <dt>업무 캘린더</dt>
-          <dd>계약 종료일, 통보 기한, 직접 추가한 일정을 월간 또는 목록으로 확인하세요. 연결한 문서에서 날짜가 바뀌면 근거를 확인한 뒤 일정에 반영할 수 있습니다.</dd>
+          <dt>기한 알림</dt>
+          <dd><strong>업무 캘린더 → 기한 알림 관리</strong>에서 대장의 확정 날짜를 연결하고 계약 종료나 통보 기한 전에 알림을 받도록 설정하세요.</dd>
         </div>
         <div>
           <dt>프로젝트 인수인계</dt>
@@ -238,7 +212,7 @@
         </div>
         <div>
           <dt>저장된 보기와 일괄 정리</dt>
-          <dd>키보드로 문서 형식과 업무 상태를 고르거나 태그 제안을 선택하세요. 자주 쓰는 검색 조건을 저장하고 여러 문서의 태그와 업무 상태를 한꺼번에 바꿀 수 있습니다.</dd>
+          <dd>Astryx 선택 메뉴에서 방향키와 Enter로 문서 형식, 업무 상태, 태그 제안을 고르세요. 자주 쓰는 검색 조건은 보기로 저장하고, 여러 문서의 태그와 상태는 한꺼번에 바꿀 수 있습니다.</dd>
         </div>
         <div>
           <dt>선택 문서에 질문</dt>
@@ -274,7 +248,7 @@
     <section class="ready container" aria-labelledby="ready-title">
       <div>
         <h2 id="ready-title">내 PC에 첫 보관함을 만들어 보세요</h2>
-        <p>설치부터 문서 가져오기, AI 연결, 사본 저장까지 사용 가이드에서 따라 할 수 있습니다.</p>
+        <p>사용 가이드에서 문서 가져오기, 업무 캘린더, AI 연결과 작업실 사용법을 확인하세요.</p>
       </div>
       <div class="ready-actions">
         <a class="platform" href="#downloads">다운로드 보기 <span aria-hidden="true">↑</span></a>

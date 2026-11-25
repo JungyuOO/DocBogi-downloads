@@ -185,7 +185,7 @@ nav a { text-decoration: none; color: var(--muted); font-size: 14px; }
   cursor: pointer;
   transform: rotate(-1.3deg);
 }
-.hero-file-slides {
+.hero-file-contract {
   --tab: #914322;
   --tab-paper: #ffe5d7;
   margin-left: 5px;
@@ -427,7 +427,9 @@ a.platform:hover { background: #1739ad; border-color: #1739ad; }
 .demo video {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: auto;
+  aspect-ratio: auto 16 / 9;
+  object-fit: contain;
   border-radius: 5px;
   background: var(--plate);
 }
@@ -477,77 +479,18 @@ a.platform:hover { background: #1739ad; border-color: #1739ad; }
   line-height: 1.75;
 }
 .detail-image {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 230px;
-  padding: clamp(13px, 3vw, 40px);
+  min-width: 0;
+  cursor: zoom-in;
+  padding: clamp(4px, 1vw, 10px);
   background: var(--plate);
   border: 1px solid var(--line);
   border-radius: 9px;
 }
 .detail-image img {
-  width: auto;
-  max-height: 360px;
-  object-fit: contain;
-  border-radius: 5px;
-  box-shadow: 0 6px 22px #292f4820;
-}
-
-.route-example {
-  min-width: 0;
-  padding: clamp(15px, 2.6vw, 30px);
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: var(--plate);
-}
-.route-example figcaption {
-  margin-bottom: 13px;
-  font-size: 14px;
-  font-weight: 700;
-}
-.route-table {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  font-size: 14px;
+  height: auto;
+  border-radius: 5px;
 }
-.route-table th,
-.route-table td {
-  padding: 11px 0;
-  text-align: left;
-  vertical-align: middle;
-  border-bottom: 1px solid var(--line);
-}
-.route-table th {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-}
-.route-table th:first-child { width: 58%; }
-.route-table :is(th, td) + :is(th, td) { padding-inline-start: 10px; }
-
-.route-file,
-.route-destination {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow-wrap: anywhere;
-}
-.route-kind {
-  display: grid;
-  place-items: center;
-  flex: 0 0 24px;
-  height: 24px;
-  border-radius: 4px;
-  font: 700 12px/1 system-ui, sans-serif;
-}
-.kind-word { color: #2142a4; background: #dce6ff; }
-.kind-slides { color: #892f18; background: #f7e3d8; }
-.kind-sheet { color: #1e5c39; background: #daeae0; }
-.route-destination { color: var(--accent); font-weight: 700; }
-.route-arrow { flex: none; color: var(--muted); font-weight: 400; }
-.detail .route-example p { margin-top: 12px; font-size: 12px; }
 
 .workflows,
 .faq {
@@ -561,19 +504,6 @@ a.platform:hover { background: #1739ad; border-color: #1739ad; }
   letter-spacing: -0.05em;
   word-break: keep-all;
 }
-.navigation-preview {
-  margin: 22px 0 0;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  overflow: hidden;
-  background: var(--plate);
-}
-.navigation-preview img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
 .workflow-list {
   margin: 20px 0 0;
   border-top: 1px solid var(--line);
@@ -681,8 +611,6 @@ a.platform:hover { background: #1739ad; border-color: #1739ad; }
   .container { width: calc(100% - 34px); }
   .hero-description { margin-top: 18px; }
   .detail { grid-template-columns: minmax(0, 1fr); }
-  .detail-image { min-height: 0; }
-  .route-table { font-size: 13px; }
   .workflow-list > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .ready { flex-direction: column; align-items: flex-start; }
 }
