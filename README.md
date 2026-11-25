@@ -14,10 +14,10 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세�
 
 | 운영체제 | 설치 파일 | 설치 방법 |
 | --- | --- | --- |
-| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.0/Docvia-Setup-1.1.0-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
-| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.0/Docvia-1.1.0-mac-universal.dmg) | DMG를 열어 Docvia를 **응용 프로그램**으로 옮겨 실행합니다. |
+| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.1/Docvia-Setup-1.1.1-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
+| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.1/Docvia-1.1.1-mac-universal.dmg) | DMG를 열어 Docvia를 **응용 프로그램**으로 옮겨 실행합니다. |
 
-배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.1.0) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
+배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.1.1) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
 
 ## 빠른 시작
 
@@ -41,6 +41,20 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세�
 2. **본문 추출**이 끝나면 파일명과 추출된 본문을 검색할 수 있습니다. 요약이 저장된 문서는 요약 내용도 검색됩니다. 아직 진행 중이거나 실패한 작업은 **처리 현황**에서 확인합니다.
 3. **AI 분석**은 문서의 추출 텍스트와 지원되는 시각 자료를 사용해 요약, 오탈자 후보, 분류 근거를 만들어 분석 결과를 보관함에 저장합니다. **검수** 탭에서는 후보의 위치, 원문, 제안 문구와 검수 상태를 확인합니다.
 4. **폴더 배치**는 자동 정리 설정과 분류 근거가 충족될 때 적용됩니다. **자동 분류 규칙**에서 기준을 관리하고 기존 문서에 적용하기 전에는 대상과 예상 결과를 미리 봅니다.
+
+## 계약서로 업무대장 만들기
+
+예를 들어 유지보수 계약서를 보관함에 추가한 뒤, **업무대장**에서 종료일과 금액 후보를 원문 조항과 대조해 확정할 수 있습니다. 이후 확정된 값을 부서의 Excel 양식, 기한 알림, 프로젝트 인수인계에 함께 활용합니다.
+
+| 업무 | 사용 방법 |
+| --- | --- |
+| 계약 접수 | **업무대장**에서 열을 정하고 AI로 후보를 추출하거나 직접 입력합니다. 재추출해도 사용자가 확정한 값은 보존됩니다. |
+| 부서 양식 작성 | **엑셀 양식·내보내기**에서 XLSX 시트와 머리글을 연결합니다. 확정 값의 기록 위치와 충돌을 확인한 뒤 사본에 저장합니다. |
+| 반복 작업 | **업무 자동화**에서 실행 시점, 조건, 각 분기의 작업 순서를 정합니다. 시험 실행으로 전송 여부와 예상 작업을 확인하고, 실행 기록에서 실패한 단계를 재시도합니다. |
+| 기한 관리 | **기한·알림**에서 계약 종료일과 통보 조건을 확인하고 개인 알림일을 설정합니다. 영업일 조건처럼 계산 기준이 애매하면 실제 통보일을 먼저 확정합니다. |
+| 인수인계 | 프로젝트에서 **인수인계 만들기**를 열고 문서와 첨부를 선택합니다. 확인한 근거와 메모를 HTML로 정리해 선택한 첨부와 함께 ZIP으로 저장합니다. |
+
+설치본의 제공 상태는 [공식 릴리스](https://github.com/JungyuOO/Docvia-downloads/releases/latest)에서 확인할 수 있습니다. [업무대장 사용 가이드](user-guide.md#문서를-업무대장에-기록하기)
 
 ## 반복해서 쓰는 업무 기능
 
