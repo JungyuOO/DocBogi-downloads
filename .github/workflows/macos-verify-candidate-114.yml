@@ -1,0 +1,183 @@
+name: Verify exact macOS 1.1.4 candidate (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    timeout-minutes: 14
+    env:
+      CANDIDATE_RUN: '45651662531'
+      CANDIDATE_ARTIFACT: '15040007500'
+      CANDIDATE_SHA: ca7a21d21634ec9e1bcea3987c2f27e9cbd511f8a900b375681a0fb48d7d1ec1
+      APPROVED_DIST: 88cb302b8f6f60fd04d420e2435eb15ed6d62e82d8274eb6eecb15ecc8f6c5e6
+      BASE_SHA: 7cf4657db499d7125991c38efd51a03ecaeaf598dc448bfe2fcfd9bf51bf28b5
+    steps:
+      - name: Check out release verification tooling
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Use pinned Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22.22.1
+
+      - name: Prepare isolated verification paths
+        id: prepare
+        shell: bash
+        run: |
+          set -euo pipefail
+          work=$(mktemp -d "$(cd "$RUNNER_TEMP" && pwd -P)/docbogi-114-verify.XXXXXXXX")
+          mkdir "$work/diagnostics" "$work/candidate" "$work/base-mounted" "$work/final-mounted"
+          printf '%s\n' "run=$CANDIDATE_RUN" "artifact=$CANDIDATE_ARTIFACT" "dmg=$CANDIDATE_SHA" "dist=$APPROVED_DIST" > "$work/diagnostics/inputs.txt"
+          printf '%s\n' "work=$work" >> "$GITHUB_OUTPUT"
+
+      - name: Download and identify the exact candidate artifact
+        shell: bash
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WORK: ${{ steps.prepare.outputs.work }}
+        run: |
+          set -euo pipefail
+          api="repos/$GITHUB_REPOSITORY/actions"
+          gh api "$api/artifacts/$CANDIDATE_ARTIFACT" > "$WORK/artifact.json"
+          python3 - "$WORK/artifact.json" <<'PY'
+          import json, os, sys
+          with open(sys.argv[1], encoding="utf-8") as stream:
+              asset = json.load(stream)
+          assert str(asset["id"]) == os.environ["CANDIDATE_ARTIFACT"]
+          assert str(asset["workflow_run"]["id"]) == os.environ["CANDIDATE_RUN"]
+          assert asset["name"] == "docbogi-macos-universal-1.1.4-candidate-do-not-release"
+          assert not asset["expired"] and 0 < asset["size_in_bytes"] <= 256 * 1024 * 1024
+          PY
+          gh api "$api/artifacts/$CANDIDATE_ARTIFACT/zip" > "$WORK/candidate.zip"
+          python3 - "$WORK" <<'PY'
+          from hashlib import file_digest
+          import os, shutil, stat, sys
+          from pathlib import Path
+          from zipfile import ZipFile
+          work = Path(sys.argv[1])
+          stem = "DocBogi-1.1.4-mac-universal"
+          dmg, checksum = stem + ".dmg", stem + ".sha256"
+          expected = os.environ["CANDIDATE_SHA"]
+          with ZipFile(work / "candidate.zip") as archive:
+              extracted = set()
+              for member in archive.infolist():
+                  if member.is_dir() and member.filename == "release-output/":
+                      continue
+                  name = member.filename.removeprefix("release-output/")
+                  assert name in {dmg, checksum} and name not in extracted
+                  assert not member.is_dir() and not stat.S_ISLNK(member.external_attr >> 16)
+                  assert 0 < member.file_size <= (512 if name == checksum else 256 * 1024 * 1024)
+                  with archive.open(member) as source, (work / "candidate" / name).open("xb") as target:
+                      shutil.copyfileobj(source, target)
+                  extracted.add(name)
+              assert extracted == {dmg, checksum}
+          (published, name) = (work / "candidate" / checksum).read_text(encoding="ascii").strip().split()
+          assert published == expected and name == dmg
+          with (work / "candidate" / dmg).open("rb") as stream:
+              assert file_digest(stream, "sha256").hexdigest() == expected
+          print("[mac-candidate] pinned DMG hash matched")
+          PY
+
+      - name: Verify the pinned base, architecture and installed payload
+        shell: bash
+        timeout-minutes: 3
+        env:
+          WORK: ${{ steps.prepare.outputs.work }}
+        run: |
+          set -euo pipefail
+          base="$WORK/base-mounted"
+          final="$WORK/final-mounted"
+          candidate="$WORK/candidate/DocBogi-1.1.4-mac-universal.dmg"
+          base_attached=false
+          final_attached=false
+          cleanup() {
+            if "$final_attached"; then hdiutil detach "$final" || true; fi
+            if "$base_attached"; then hdiutil detach "$base" || true; fi
+          }
+          trap cleanup EXIT
+          curl --fail --show-error --silent --location --retry 2 --max-time 80 \
+            --output "$WORK/base.dmg" \
+            https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.3/DocBogi-1.1.3-mac-universal.dmg
+          printf '%s  %s\n' "$BASE_SHA" "$WORK/base.dmg" | shasum -a 256 -c -
+          hdiutil verify "$WORK/base.dmg"
+          hdiutil verify "$candidate"
+          hdiutil attach -readonly -nobrowse -mountpoint "$base" "$WORK/base.dmg"
+          base_attached=true
+          hdiutil attach -readonly -nobrowse -mountpoint "$final" "$candidate"
+          final_attached=true
+          codesign --verify --deep --strict "$base/DocBogi.app"
+          test "$(readlink "$final/Applications")" = /Applications
+          test ! -e "$final/Docvia.app"
+          python3 release-tools/install_macos_payload_114.py verify --app "$final/DocBogi.app" \
+            --expected-dist "$APPROVED_DIST" --work "$WORK" | tee "$WORK/diagnostics/bundle-verification.log"
+          python3 - "$WORK/fixtures" <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, "release-tools")
+          from patch_macos import create_fixtures
+          create_fixtures(Path(sys.argv[1]))
+          PY
+
+      - name: Install the pinned smoke dependency
+        shell: bash
+        timeout-minutes: 2
+        env:
+          WORK: ${{ steps.prepare.outputs.work }}
+        run: |
+          set -euo pipefail
+          npm install --prefix "$WORK/qa-deps" --registry https://registry.npmjs.org \
+            --no-audit --no-fund --ignore-scripts --save-exact playwright-core@1.65.0
+
+      - name: Verify the fresh install and the installed upgrade
+        id: smoke
+        shell: bash
+        timeout-minutes: 8
+        env:
+          WORK: ${{ steps.prepare.outputs.work }}
+        run: |
+          set -euo pipefail
+          base="$WORK/base-mounted"
+          final="$WORK/final-mounted"
+          base_attached=false
+          final_attached=false
+          cleanup() {
+            if "$final_attached"; then hdiutil detach "$final" || true; fi
+            if "$base_attached"; then hdiutil detach "$base" || true; fi
+          }
+          trap cleanup EXIT
+          hdiutil attach -readonly -nobrowse -mountpoint "$base" "$WORK/base.dmg"
+          base_attached=true
+          hdiutil attach -readonly -nobrowse -mountpoint "$final" "$WORK/candidate/DocBogi-1.1.4-mac-universal.dmg"
+          final_attached=true
+          node release-tools/verify_macos_candidate_114.cjs "$base/DocBogi.app" "$final/DocBogi.app" "$WORK" \
+            "$WORK/qa-deps/node_modules/playwright-core" 2>&1 | tee "$WORK/diagnostics/smoke.log"
+          test -f "$WORK/diagnostics/result.json"
+
+      - name: Keep bounded verification diagnostics
+        if: always() && steps.prepare.outcome == 'success'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: docbogi-macos-1.1.4-candidate-verification-diagnostics
+          path: ${{ steps.prepare.outputs.work }}/diagnostics
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload the verified original candidate bytes
+        if: success() && steps.smoke.outcome == 'success'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: docbogi-macos-universal-1.1.4
+          path: ${{ steps.prepare.outputs.work }}/candidate/DocBogi-1.1.4-mac-universal.dmg
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
