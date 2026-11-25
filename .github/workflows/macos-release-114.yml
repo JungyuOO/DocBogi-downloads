@@ -78,7 +78,8 @@ jobs:
           printf '%s  %s\n' "$WIN_SHA" "$work/windows-setup.exe" | shasum -a 256 -c -
           printf '%s\n' "DOCBOGI_MAC_RELEASE_WORK=$work" "DOCBOGI_APPROVED_DIST=$DIST_SHA" >> "$GITHUB_ENV"
 
-      - name: Stage, sign, mount and exercise the macOS installer
+      - name: Stage, sign and verify the macOS installer disk
+        id: disk
         shell: bash
         run: |
           set -euo pipefail
@@ -98,6 +99,7 @@ jobs:
           trap cleanup EXIT
           mkdir "$base_mount" "$final_mount" "$volume" "$output"
 
+          echo "[mac-disk] download and verify the pinned 1.1.3 base"
           curl --fail --show-error --silent --location --retry 3 \
             --output "$work/base.dmg" \
             https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.3/DocBogi-1.1.3-mac-universal.dmg
@@ -113,10 +115,12 @@ jobs:
             HOMEBREW_NO_AUTO_UPDATE=1 brew install sevenzip
           fi
           archiver="$(command -v 7zz)"
+          echo "[mac-disk] stage and sign the allowed 1.1.4 payload"
           python3 release-tools/install_macos_payload_114.py stage \
             --app "$volume/DocBogi.app" --donor "$work/windows-setup.exe" \
             --expected-dist "$DOCBOGI_APPROVED_DIST" --work "$work" --archiver "$archiver"
 
+          echo "[mac-disk] create and verify the 1.1.4 disk image"
           ln -s /Applications "$volume/Applications"
           hdiutil create -fs HFS+ -format UDZO -volname DocBogi -srcfolder "$volume" "$installer"
           hdiutil verify "$installer"
@@ -128,17 +132,52 @@ jobs:
           test ! -e "$final_mount/Docvia.app"
           python3 release-tools/install_macos_payload_114.py verify \
             --app "$bundle" --work "$work" --expected-dist "$DOCBOGI_APPROVED_DIST"
-          npm install --prefix "$work/qa-deps" --registry https://registry.npmjs.org \
+          (
+            cd "$output"
+            shasum -a 256 DocBogi-1.1.4-mac-universal.dmg | tee DocBogi-1.1.4-mac-universal.sha256
+          )
+          echo "[mac-disk] verify complete"
+
+      - name: Prepare the pinned smoke dependency
+        id: smoke_deps
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          unset GH_TOKEN GITHUB_TOKEN
+          echo "[mac-smoke] install the pinned Playwright dependency"
+          npm install --prefix "$DOCBOGI_MAC_RELEASE_WORK/qa-deps" --registry https://registry.npmjs.org \
             --no-audit --no-fund --ignore-scripts --save-exact playwright-core@1.65.0
-          node release-tools/verify_macos_114.cjs "$base_mount/DocBogi.app" "$bundle" "$work" \
-            "$work/qa-deps/node_modules/playwright-core"
-          hdiutil detach "$final_mount"
-          final_attached=false
-          hdiutil detach "$base_mount"
+
+      - name: Smoke test the installed baseline, upgrade and restart
+        id: smoke
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -euo pipefail
+          unset GH_TOKEN GITHUB_TOKEN
+          work="$DOCBOGI_MAC_RELEASE_WORK"
+          base_mount="$work/base-mounted"
+          final_mount="$work/final-mounted"
+          installer="$GITHUB_WORKSPACE/release-output/DocBogi-1.1.4-mac-universal.dmg"
           base_attached=false
-          shasum -a 256 "$installer"
+          final_attached=false
+          cleanup() {
+            if "$final_attached"; then hdiutil detach "$final_mount" || true; fi
+            if "$base_attached"; then hdiutil detach "$base_mount" || true; fi
+          }
+          trap cleanup EXIT
+          echo "[mac-smoke] mount the verified installers read-only"
+          hdiutil attach -readonly -nobrowse -mountpoint "$base_mount" "$work/base.dmg"
+          base_attached=true
+          hdiutil attach -readonly -nobrowse -mountpoint "$final_mount" "$installer"
+          final_attached=true
+          echo "[mac-smoke] start the bounded Electron harness"
+          node release-tools/verify_macos_114.cjs "$base_mount/DocBogi.app" "$final_mount/DocBogi.app" "$work" \
+            "$work/qa-deps/node_modules/playwright-core"
 
       - name: Upload the verified Universal installer
+        if: success() && steps.smoke.outcome == 'success'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: docbogi-macos-universal-1.1.4
@@ -146,3 +185,15 @@ jobs:
           if-no-files-found: error
           compression-level: 0
           retention-days: 7
+
+      - name: Retain the failed smoke candidate for diagnosis
+        if: failure() && steps.disk.outcome == 'success' && (steps.smoke_deps.outcome == 'failure' || steps.smoke.outcome == 'failure')
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: docbogi-macos-universal-1.1.4-candidate-do-not-release
+          path: |
+            release-output/DocBogi-1.1.4-mac-universal.dmg
+            release-output/DocBogi-1.1.4-mac-universal.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 3
