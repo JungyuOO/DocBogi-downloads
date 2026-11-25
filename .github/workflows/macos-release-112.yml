@@ -59,7 +59,7 @@ jobs:
           [[ "$DIST_SHA" =~ ^[a-f0-9]{64}$ ]]
           work=$(mktemp -d "$(cd "$RUNNER_TEMP" && pwd -P)/docvia-112.XXXXXXXX")
           endpoint="repos/$GITHUB_REPOSITORY/releases"
-          gh api "$endpoint/$DRAFT_ID" --jq 'select(.draft and .tag_name=="v1.1.2") | .id' > "$work/draft-id"
+          gh api "$endpoint/$DRAFT_ID" --jq 'select(.draft and (.tag_name=="v1.1.2" or .tag_name=="v1.1.2-rebuild.1")) | .id' > "$work/draft-id"
           test "$(cat "$work/draft-id")" = "$DRAFT_ID"
           gh api "$endpoint/$DRAFT_ID/assets?per_page=100" > "$work/assets.json"
           python3 - "$work/assets.json" <<'PY'
