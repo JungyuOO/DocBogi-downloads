@@ -6,9 +6,11 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모아 파
 
 [다운로드](https://jungyuoo.github.io/DocBogi-downloads/#downloads) · [사용 가이드](user-guide.md) · [지원 형식](#지원-형식)
 
-[![DocBogi v1.1.3의 문서 보관과 검색, AI 분석과 편집, 업무 도구 사용 시연](media/docbogi-overview-113.webp)](media/docbogi-overview-113.mp4)
+[![DocBogi 사용 시연](media/docbogi-actions-113.webp)](media/docbogi-actions-113.mp4)
 
-문서를 모아 분류하고 검색한 뒤 AI 요약·검수·질문, 일괄 정리와 편집, 업무대장·자동화·인수인계, 캘린더 기한 관리와 원문 확인까지 살펴봅니다. [40초 전체 기능 시연](media/docbogi-overview-113.mp4)
+회의록을 검색해 AI 요약과 오탈자 후보를 확인하고, 문서 작업실에서 수정한 사본을 저장합니다. 태그 일괄 정리, 대장 Excel 미리보기, 자동화 실행 기록, 일정에 연결된 원문도 볼 수 있습니다.
+
+[DocBogi 사용 시연](media/docbogi-actions-113.mp4) · [자동 분류·문서 질문·인수인계 동작 보기](media/docbogi-actions-more-113.mp4)
 
 ## 설치
 
