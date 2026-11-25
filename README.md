@@ -17,6 +17,8 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모으세�
 | Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.2/Docvia-Setup-1.1.2-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
 | macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/Docvia-downloads/releases/download/v1.1.2/Docvia-1.1.2-mac-universal.dmg) | DMG를 열어 Docvia를 **응용 프로그램**으로 옮겨 실행합니다. |
 
+**v1.1.2 수정 배포 · 2026-11-25.** 사내 Qwen의 업무대장 추출과 근거 확인, 좁은 화면의 작업실 도구 모음을 개선했습니다. 기존 v1.1.2 사용자는 위 설치 파일을 다시 받아 갱신할 수 있습니다.
+
 배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/Docvia-downloads/releases/tag/v1.1.2) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
 
 ## v1.1.2에서 메뉴 찾기
