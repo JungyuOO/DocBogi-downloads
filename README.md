@@ -16,12 +16,12 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모아 파
 
 | 운영체제 | 설치 파일 | 설치 방법 |
 | --- | --- | --- |
-| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.3/DocBogi-Setup-1.1.3-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
-| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.3/DocBogi-1.1.3-mac-universal.dmg) | DMG를 열어 앱을 **응용 프로그램**으로 옮겨 실행합니다. |
+| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.4/DocBogi-Setup-1.1.4-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
+| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.4/DocBogi-1.1.4-mac-universal.dmg) | DMG를 열어 앱을 **응용 프로그램**으로 옮겨 실행합니다. |
 
-**v1.1.3 · 2026-11-25.** 업무 캘린더의 월간·목록 보기에서 문서 기한과 직접 추가한 일정을 함께 확인할 수 있습니다. Astryx 선택 메뉴에서 방향키와 Enter로 문서 형식, 업무 상태, 태그 제안을 고를 수 있습니다.
+**v1.1.4.** 문서를 보면서 업무 캘린더를 열어 두고, 시작일과 종료일이 있는 일정에 관련 문서를 여러 개 연결할 수 있습니다.
 
-배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.3) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
+배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.4) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
 
 ## 메뉴 찾기
 
@@ -58,7 +58,7 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모아 파
 2. **문서 날짜 후보**에서 제출 마감의 날짜, 시각과 인용문을 확인해 선택한 뒤 **저장**을 누릅니다.
 3. **업무 도구 → 업무 캘린더**에서 월간으로 보거나 목록을 엽니다. 방금 등록한 일정을 열고 **원문 위치 열기**를 누르면 문서 작업실에 근거가 표시됩니다.
 
-문서와 연결한 일정과 직접 만든 일정을 함께 볼 수 있습니다. **일정 알림**을 켜면 원하는 시점에 알림을 받고, 원문의 날짜가 바뀌면 기존 일정과 새 날짜 후보를 비교한 뒤 반영할 수 있습니다. [월간 캘린더](media/calendar-113.webp) · [작업실의 원문 근거](media/evidence-113.webp)
+문서 없이도 일정을 만들 수 있습니다. 시작일과 종료일이 다른 일정은 월간 보기에서 주별로 이어집니다. 관련 문서를 여러 개 연결하고, 시작일 또는 종료일을 기준으로 알림을 설정할 수 있습니다. 원문의 날짜가 바뀌면 기존 기간과 새 후보를 비교한 뒤 적용하세요. [월간 캘린더](media/calendar-113.webp) · [작업실의 원문 근거](media/evidence-113.webp)
 
 ## 문서가 처리되는 방식
 

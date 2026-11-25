@@ -1,162 +1,107 @@
 "use strict";
 
-const demo = document.querySelector(".demo video");
-const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+const story = document.querySelector("[data-story]");
+const livePreview = story?.querySelector("[data-story-live]");
+const stages = [...(story?.querySelectorAll("[data-stage]") ?? [])];
+const links = [...(story?.querySelectorAll(".story-nav a") ?? [])];
+const pinnedLayout = window.matchMedia("(min-width: 980px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)");
 
-if (demo) {
-  demo.muted = true;
-  if (!motionPreference.matches) {
-    demo.play().catch(() => {
-      // The native playback controls remain available when autoplay is blocked.
+if (story && livePreview && stages.length && links.length === stages.length) {
+  let activeIndex = -1;
+  let pendingFrame = 0;
+
+  function activate(index) {
+    if (index === activeIndex) return;
+    const material = stages[index].querySelector("[data-story-content]");
+    if (!material) return;
+    const preview = material.cloneNode(true);
+    const image = preview.querySelector("img");
+    if (image) image.loading = "eager";
+    livePreview.replaceChildren(preview);
+    story.dataset.activeStage = stages[index].dataset.stage;
+    links.forEach((link, i) => {
+      if (i === index) link.setAttribute("aria-current", "step");
+      else link.removeAttribute("aria-current");
     });
+    activeIndex = index;
   }
-  motionPreference.addEventListener("change", event => {
-    if (event.matches) demo.pause();
-  });
+
+  function updateFromScroll() {
+    pendingFrame = 0;
+    if (!pinnedLayout.matches) return;
+    const header = document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0;
+    const readingLine = header + (window.innerHeight - header) * 0.34;
+    let index = 0;
+    for (let i = 1; i < stages.length; i++) {
+      if (stages[i].getBoundingClientRect().top > readingLine) break;
+      index = i;
+    }
+    activate(index);
+  }
+
+  function requestUpdate() {
+    if (pinnedLayout.matches && !pendingFrame) pendingFrame = window.requestAnimationFrame(updateFromScroll);
+  }
+
+  function updateLayout() {
+    story.classList.toggle("is-pinned", pinnedLayout.matches);
+    livePreview.hidden = !pinnedLayout.matches;
+    if (pinnedLayout.matches) {
+      if (activeIndex === -1) activate(0);
+      requestUpdate();
+    } else {
+      story.dataset.activeStage = "find";
+      links.forEach(link => link.removeAttribute("aria-current"));
+      activeIndex = -1;
+    }
+  }
+
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate);
+  window.addEventListener("hashchange", requestUpdate);
+  window.addEventListener("pageshow", requestUpdate);
+  pinnedLayout.addEventListener("change", updateLayout);
+  updateLayout();
 }
 
-const preview = document.querySelector("[data-document-preview]");
-const previewStatus = document.querySelector("[data-preview-status]");
+const theater = document.querySelector("[data-theater]");
+const reelLinks = [...(theater?.querySelectorAll("[data-reel-link]") ?? [])];
+const reels = [...(theater?.querySelectorAll("[data-reel]") ?? [])];
 
-if (preview && previewStatus) {
-  const files = [...preview.querySelectorAll("button[aria-controls]")];
-  const summaries = files.map(file => document.getElementById(file.getAttribute("aria-controls")));
-  let selected = 0;
-  let nextPreview;
-  let filingEffect;
-  let pointerInside = false;
-  let focusInside = preview.contains(document.activeElement);
-  let visible = true;
-
-  function selectDocument(index, automatic = false) {
-    window.clearTimeout(filingEffect);
-    delete preview.dataset.phase;
-
-    if (index !== selected) {
-      files[selected].setAttribute("aria-pressed", "false");
-      summaries[selected].hidden = true;
-      selected = index;
-      files[selected].setAttribute("aria-pressed", "true");
-      summaries[selected].hidden = false;
+if (theater && reels.length && reelLinks.length === reels.length) {
+  let selected;
+  function selectReel(id) {
+    const next = reels.find(reel => reel.id === id);
+    if (!next || next === selected) return;
+    const restoreFocus = selected?.contains(document.activeElement);
+    for (const reel of reels) {
+      if (reel !== next) reel.querySelector("video")?.pause();
+      reel.hidden = reel !== next;
     }
-
-    if (automatic && !motionPreference.matches) {
-      preview.dataset.phase = "filing";
-      filingEffect = window.setTimeout(() => {
-        delete preview.dataset.phase;
-      }, 640);
-    } else if (!automatic) {
-      const summary = summaries[selected];
-      previewStatus.textContent = [...summary.children].map(element => element.textContent).join(" · ");
+    for (const link of reelLinks) {
+      if (link.hash === "#" + id) {
+        link.setAttribute("aria-current", "true");
+        if (restoreFocus) link.focus({ preventScroll: true });
+      } else link.removeAttribute("aria-current");
     }
+    selected = next;
   }
 
-  function refreshPlayback() {
-    window.clearTimeout(nextPreview);
-    if (motionPreference.matches || pointerInside || focusInside || !visible || document.hidden) return;
-
-    nextPreview = window.setTimeout(() => {
-      selectDocument((selected + 1) % files.length, true);
-      refreshPlayback();
-    }, 3150);
+  function syncReelFromHash() {
+    const hash = window.location.hash;
+    if (!hash || hash === "#demo") selectReel(reels[0].id);
+    else if (reels.some(reel => hash === "#" + reel.id)) selectReel(hash.slice(1));
   }
 
-  preview.addEventListener("pointerenter", event => {
-    if (event.pointerType === "touch") return;
-    pointerInside = true;
-    refreshPlayback();
-  });
-  preview.addEventListener("pointerleave", event => {
-    if (event.pointerType === "touch") return;
-    pointerInside = false;
-    refreshPlayback();
-  });
-  preview.addEventListener("focusin", () => {
-    focusInside = true;
-    refreshPlayback();
-  });
-  preview.addEventListener("focusout", event => {
-    focusInside = preview.contains(event.relatedTarget);
-    refreshPlayback();
-  });
-
-  files.forEach((file, index) => {
-    file.addEventListener("pointerenter", event => {
-      if (event.pointerType !== "touch") selectDocument(index);
+  for (const link of reelLinks) {
+    link.addEventListener("click", event => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      // The destination must be visible before native fragment navigation starts.
+      selectReel(link.hash.slice(1));
     });
-    file.addEventListener("focus", () => selectDocument(index));
-    file.addEventListener("click", () => {
-      // Some touch browsers do not focus buttons by default.
-      if (document.activeElement !== file) file.focus({ preventScroll: true });
-      else selectDocument(index);
-    });
-  });
-
-  document.addEventListener("pointerdown", event => {
-    if (event.pointerType === "touch" && focusInside && !preview.contains(event.target)) {
-      document.activeElement.blur();
-    }
-  });
-  motionPreference.addEventListener("change", refreshPlayback);
-
-  document.addEventListener("visibilitychange", refreshPlayback);
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      refreshPlayback();
-    }).observe(preview);
   }
-
-  if (!motionPreference.matches && !document.hidden) selectDocument(0, true);
-  refreshPlayback();
-}
-
-for (const details of document.querySelectorAll(".faq-list details")) {
-  const summary = details.querySelector("summary");
-  const answer = details.querySelector(".faq-answer");
-  if (!summary || !answer || typeof details.animate !== "function") continue;
-
-  let animation;
-  let targetOpen = details.open;
-
-  function finishMotion(activeAnimation) {
-    if (animation !== activeAnimation) return;
-    details.open = targetOpen;
-    animation = undefined;
-    activeAnimation.cancel();
-    delete details.dataset.faqMotion;
-  }
-
-  summary.addEventListener("click", event => {
-    if (event.defaultPrevented || motionPreference.matches) return;
-    event.preventDefault();
-
-    const nextOpen = animation ? !targetOpen : !details.open;
-    const startHeight = details.getBoundingClientRect().height;
-    animation?.cancel();
-    animation = undefined;
-    targetOpen = nextOpen;
-
-    // Keep the answer available for measurement and for the closing transition.
-    details.open = true;
-    const openHeight = details.getBoundingClientRect().height;
-    const endHeight = nextOpen ? openHeight : openHeight - answer.getBoundingClientRect().height;
-    if (Math.abs(startHeight - endHeight) < 1) {
-      details.open = nextOpen;
-      delete details.dataset.faqMotion;
-      return;
-    }
-
-    details.dataset.faqMotion = nextOpen ? "opening" : "closing";
-    const activeAnimation = details.animate(
-      [{ height: `${startHeight}px` }, { height: `${endHeight}px` }],
-      { duration: 220, easing: "ease", fill: "both" }
-    );
-    animation = activeAnimation;
-    activeAnimation.onfinish = () => finishMotion(activeAnimation);
-  });
-
-  motionPreference.addEventListener("change", event => {
-    if (event.matches && animation) finishMotion(animation);
-  });
+  window.addEventListener("hashchange", syncReelFromHash);
+  window.addEventListener("pageshow", syncReelFromHash);
+  syncReelFromHash();
+  if (!selected) selectReel(reels[0].id);
 }
