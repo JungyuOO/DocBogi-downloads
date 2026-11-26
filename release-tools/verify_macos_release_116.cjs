@@ -28,6 +28,13 @@ async function verifyCalendarEditor(page, calendar, editor) {
   await page.getByRole("navigation", { name: "문서함", exact: true }).waitFor({ state: "visible" });
   assert(await editor.evaluate(element => element.closest("main")?.id === "docvia-calendar" && !element.matches(":modal")),
     "The wide editor should be a non-modal dialog inside the calendar workspace");
+  await editor.evaluate(async element => {
+    const dock = element.closest(".calendar-editor-dock");
+    // An open dialog is visible before the dock and drawer reach their final positions.
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    const animations = [...element.getAnimations(), ...(dock?.getAnimations() ?? [])];
+    await Promise.allSettled(animations.map(animation => animation.finished));
+  });
   const [viewBounds, editorBounds, workspaceBounds] = await Promise.all([
     view.boundingBox(), editor.boundingBox(), calendar.boundingBox(),
   ]);
