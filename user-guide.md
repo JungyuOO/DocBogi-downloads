@@ -12,6 +12,8 @@ EXE를 실행하고 설치 마법사를 따라 진행합니다. 바탕화면 바
 
 배포 파일에는 게시자 인증서로 만든 서명이 없어 SmartScreen 경고가 표시될 수 있습니다. 공식 배포 페이지에서 받은 파일임을 확인한 경우, 경고창의 **추가 정보**를 눌러 **실행** 버튼이 표시되면 선택합니다. 관리 정책으로 실행이 제한된 기기에서는 IT 관리자에게 설치를 요청합니다. [Microsoft SmartScreen 안내](https://learn.microsoft.com/en-us/troubleshoot/microsoft-edge/development/ie-mode-blocks-addon)
 
+창을 닫아도 DocBogi는 Windows 알림 영역에서 실행을 계속합니다. 시계 옆 DocBogi 아이콘을 클릭하거나 바로가기를 다시 실행하면 작업하던 창으로 돌아갑니다. 아이콘이 보이지 않으면 숨겨진 아이콘을 펼치세요. 앱을 끝내려면 DocBogi 아이콘을 오른쪽 클릭하고 **프로그램 종료**를 선택하세요. 업데이트 설치를 예약했다면 창을 닫을 때 설치 절차가 시작됩니다.
+
 ### macOS
 
 하나의 DMG에 Apple Silicon과 Intel용 실행 파일이 들어 있습니다. DMG를 열고 앱을 **응용 프로그램** 폴더로 끌어 놓은 뒤, 그 폴더에서 앱을 실행합니다.

@@ -16,12 +16,12 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모아 파
 
 | 운영체제 | 설치 파일 | 설치 방법 |
 | --- | --- | --- |
-| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.4/DocBogi-Setup-1.1.4-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
-| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.4/DocBogi-1.1.4-mac-universal.dmg) | DMG를 열어 앱을 **응용 프로그램**으로 옮겨 실행합니다. |
+| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.5/DocBogi-Setup-1.1.5-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
+| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.5/DocBogi-1.1.5-mac-universal.dmg) | DMG를 열어 앱을 **응용 프로그램**으로 옮겨 실행합니다. |
 
-**v1.1.4.** 문서를 보면서 업무 캘린더를 열어 두고, 시작일과 종료일이 있는 일정에 관련 문서를 여러 개 연결할 수 있습니다.
+**v1.1.5.** PDF의 스캔·삽입 이미지에서 발견한 오탈자 후보를 원본 이미지와 대조합니다. Windows에서는 창을 닫아도 알림 영역에서 실행을 계속하며, DocBogi 아이콘으로 창을 다시 열 수 있습니다.
 
-배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.4) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
+배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.5) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
 
 ## 메뉴 찾기
 
