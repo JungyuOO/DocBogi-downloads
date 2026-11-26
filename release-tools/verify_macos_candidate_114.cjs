@@ -155,6 +155,7 @@ async function collectFailure(error, label) {
     const name = label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
     await fs.writeFile(path.join(diagnostics, name + "-" + randomUUID() + ".json"), JSON.stringify(result, null, 2));
   }
+  if (osCredentialConsent) error.credentialWaitPhase = label;
   return osCredentialConsent;
 }
 
@@ -292,22 +293,15 @@ async function withApplication(electron, bundle, { name, version, userData, isol
   }
 }
 
-async function seedLegacyProfile(app, page, scratch, scenario) {
-  const initial = await bridge(page, "snapshot");
-  assert.equal(initial.documents.length, 0);
-  assert.equal(initial.profiles.length, 0);
+async function prepareOfflineVault(page, scenario) {
   const vault = path.join(scenario, "fixture-vault");
   await fs.mkdir(vault);
   await bridge(page, "chooseVault", vault);
   await bridge(page, "setAutoAnalyze", false);
   await bridge(page, "setAutoPlace", false);
-  await bridge(page, "saveProfile", {
-    provider: "custom",
-    name: profileName,
-    endpoint: "https://example.invalid/chat",
-    persist: true,
-  });
-  const inputs = [1, 2].map(index => path.join(scratch, "fixtures", "layout-fixture-" + index + ".docx"));
+}
+
+async function importDocuments(app, page, inputs) {
   await bounded("set synthetic file picker", 12000, () => app.evaluate(({ dialog }, filenames) => {
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: filenames });
   }, inputs));
@@ -318,22 +312,42 @@ async function seedLegacyProfile(app, page, scratch, scenario) {
     const snapshot = await window.docvia.snapshot();
     return !snapshot.jobs?.some(job => job.state === "queued" || job.state === "running");
   }, undefined, { polling: 100, timeout: 20000 }));
+  return results.map(item => item.document);
+}
+
+async function seedProfileAndDocuments(app, page, scratch, scenario) {
+  const initial = await bridge(page, "snapshot");
+  assert.equal(initial.documents.length, 0);
+  assert.equal(initial.profiles.length, 0);
+  await prepareOfflineVault(page, scenario);
+  await bridge(page, "saveProfile", {
+    provider: "custom",
+    name: profileName,
+    endpoint: "https://example.invalid/chat",
+    persist: true,
+  });
+  const inputs = [1, 2].map(index => path.join(scratch, "fixtures", "layout-fixture-" + index + ".docx"));
+  const documents = await importDocuments(app, page, inputs);
   const snapshot = await bridge(page, "snapshot");
   const profile = snapshot.profiles.find(item => item.name === profileName);
   assert(profile, "Synthetic profile was not saved");
-  const documents = results.map(item => item.document);
+  return { profileId: profile.id, documents };
+}
+
+async function seedLegacyProfile(app, page, scratch, scenario) {
+  const fixture = await seedProfileAndDocuments(app, page, scratch, scenario);
   const legacyEvent = await bridge(page, "calendarSave", {
-    date: legacyDate, time: null, title: legacyTitle, notes: "Legacy day note", documentId: documents[0].id,
+    date: legacyDate, time: null, title: legacyTitle, notes: "Legacy day note", documentId: fixture.documents[0].id,
     reminderEnabled: true, reminderDaysBefore: 1, reminderTime: "09:00",
   });
   assert.equal(legacyEvent.date, legacyDate);
   assert.equal(legacyEvent.endDate, undefined);
   assert.equal(legacyEvent.documentIds, undefined);
   assert(Number.isSafeInteger(legacyEvent.alarmAt));
-  return { profileId: profile.id, documents, legacyEvent };
+  return { ...fixture, legacyEvent };
 }
 
-async function requireLegacyProfileAndEvent(page, fixture) {
+async function requireExistingProfileAndDocuments(page, fixture) {
   const snapshot = await bridge(page, "snapshot");
   assert(snapshot.profiles.some(item => item.id === fixture.profileId && item.name === profileName),
     "Existing AI profile was not retained");
@@ -341,6 +355,10 @@ async function requireLegacyProfileAndEvent(page, fixture) {
     assert(snapshot.documents.some(item => item.id === document.id && item.name === document.name && item.hash === document.hash),
       "An existing vault document was not retained");
   }
+}
+
+async function requireLegacyProfileAndEvent(page, fixture) {
+  await requireExistingProfileAndDocuments(page, fixture);
   const event = await bridge(page, "calendarEvent", fixture.legacyEvent.id);
   assert.equal(event.title, legacyTitle);
   assert.equal(event.notes, fixture.legacyEvent.notes);
@@ -421,14 +439,14 @@ async function withOwnedUserData(userData, run) {
   }
 }
 
-async function verifyFreshInstall(electron, mounted, scratch) {
+async function verifyFreshInstall(electron, mounted, scratch, { targetVersion, verifyFresh }) {
   const scenario = path.join(scratch, "fresh-install"), applications = path.join(scenario, "Applications");
   await fs.mkdir(applications, { recursive: true });
-  const installed = await installBundle(mounted, applications, "1.1.4 fresh");
+  const installed = await installBundle(mounted, applications, targetVersion + " fresh");
   const userData = path.join(scenario, "data");
   await withOwnedUserData(userData, () => withApplication(electron, installed, {
-    name: "DocBogi", version: "1.1.4", userData, isolateData: true,
-  }, "1.1.4 fresh real keychain", async (_app, page) => {
+    name: "DocBogi", version: targetVersion, userData, isolateData: true,
+  }, targetVersion + " fresh real keychain", async (app, page) => {
     assert.equal(await page.title(), "DocBogi");
     const brand = page.locator(".brand").first();
     await brand.waitFor({ state: "visible" });
@@ -442,38 +460,40 @@ async function verifyFreshInstall(electron, mounted, scratch) {
     assert.equal(snapshot.profiles.length, 0);
     const view = await bridge(page, "calendarView", october);
     assert.deepEqual(view.events, []);
+    await verifyFresh?.(app, page, scenario);
   }));
-  log("passed 1.1.4 new installation with the real default keychain");
+  log("passed " + targetVersion + " new installation with the real default keychain");
 }
 
-async function verifyUpgrade(electron, mountedBase, mountedCurrent, scratch, userData, mockKeychain) {
+async function verifyUpgrade(electron, mountedBase, mountedCurrent, scratch, userData, mockKeychain, config) {
+  const { baseVersion, targetVersion, seedBaseline, verifyMigrated } = config;
   const mode = mockKeychain ? "mock keychain" : "real keychain";
   const scenario = path.join(scratch, mockKeychain ? "upgrade-mock" : "upgrade-real");
   const applications = path.join(scenario, "Applications");
   await fs.mkdir(applications, { recursive: true });
   const options = { name: "DocBogi", userData, isolateData: mockKeychain, mockKeychain };
   await withOwnedUserData(userData, async () => {
-    const installed = await installBundle(mountedBase, applications, "1.1.3 " + mode);
-    const fixture = await withApplication(electron, installed, { ...options, version: "1.1.3" },
-      "1.1.3 baseline " + mode, (app, page) => seedLegacyProfile(app, page, scratch, scenario));
-    const upgraded = await installBundle(mountedCurrent, applications, "1.1.4 " + mode, true);
+    const installed = await installBundle(mountedBase, applications, baseVersion + " " + mode);
+    const fixture = await withApplication(electron, installed, { ...options, version: baseVersion },
+      baseVersion + " baseline " + mode, (app, page) => seedBaseline(app, page, scratch, scenario));
+    const upgraded = await installBundle(mountedCurrent, applications, targetVersion + " " + mode, true);
     assert.equal(upgraded, installed);
-    const current = { ...options, version: "1.1.4" };
-    const saved = await withApplication(electron, installed, current, "1.1.4 upgrade " + mode, async (_app, page) => {
-      await requireLegacyProfileAndEvent(page, fixture);
+    const current = { ...options, version: targetVersion };
+    const saved = await withApplication(electron, installed, current, targetVersion + " upgrade " + mode, async (_app, page) => {
+      await verifyMigrated(page, fixture);
       return verifyCalendar(page, fixture);
     });
-    await withApplication(electron, installed, current, "1.1.4 restart " + mode, async (_app, page) => {
-      await requireLegacyProfileAndEvent(page, fixture);
+    await withApplication(electron, installed, current, targetVersion + " restart " + mode, async (_app, page) => {
+      await verifyMigrated(page, fixture);
       const view = await bridge(page, "calendarView", october);
       const event = view.events.find(item => item.id === saved.id);
       assert.deepEqual(event, saved, "The ranged event and linked documents must persist after restarting");
     });
   });
-  log("passed 1.1.3 to 1.1.4 installed upgrade and restart with " + mode);
+  log("passed " + baseVersion + " to " + targetVersion + " installed upgrade and restart with " + mode);
 }
 
-async function main() {
+async function main(config) {
   const [baseArg, bundleArg, scratchArg, modulePath] = process.argv.slice(2);
   assert([baseArg, bundleArg, scratchArg, modulePath].every(arg => arg && path.isAbsolute(arg)));
   assert.equal(process.platform, "darwin");
@@ -492,34 +512,53 @@ async function main() {
   diagnostics = path.join(scratch, "diagnostics");
   await fs.mkdir(diagnostics, { recursive: true });
 
-  // The fresh install runs before 1.1.3 can create any DocBogi keychain access rule.
-  await verifyFreshInstall(_electron, bundle, scratch);
+  // The fresh install runs before the baseline can create any DocBogi keychain access rule.
+  await verifyFreshInstall(_electron, bundle, scratch, config);
   let upgrade = "real default keychain";
+  let credentialWait;
   try {
-    await verifyUpgrade(_electron, base, bundle, scratch, path.join(appData, "Docvia"), false);
+    await verifyUpgrade(_electron, base, bundle, scratch, path.join(appData, "Docvia"), false, config);
   } catch (error) {
     if (!error.osCredentialConsent || running(active?.child)) throw error;
-    console.error("::warning::The real-keychain upgrade encountered an owned-process macOS credential wait. The synthetic storage migration will rerun with the mock keychain. OS credential consent remains a user action on an ad-hoc build.");
-    await verifyUpgrade(_electron, base, bundle, scratch, path.join(scratch, "upgrade-mock", "data"), true);
+    credentialWait = { phase: error.credentialWaitPhase, stage: error.smokeStage };
+    console.error("::warning::macOS credential wait during " + credentialWait.phase + " (" + credentialWait.stage +
+      "). The synthetic storage migration will rerun with the mock keychain. OS credential consent remains a user action on an ad-hoc build.");
+    await verifyUpgrade(_electron, base, bundle, scratch, path.join(scratch, "upgrade-mock", "data"), true, config);
     upgrade = "mock keychain after diagnosed OS credential wait";
   }
-  await fs.writeFile(path.join(diagnostics, "result.json"), JSON.stringify({ fresh: "real default keychain", upgrade }, null, 2));
+  await fs.writeFile(path.join(diagnostics, "result.json"), JSON.stringify({
+    fresh: "real default keychain", upgrade, credentialWait,
+  }, null, 2));
 }
 
-const watchdog = setTimeout(() => {
-  describeOwnedApp("420-second smoke watchdog expired");
-  const child = active?.child;
-  signalOwnedChild(child, "SIGTERM");
-  setTimeout(() => {
-    signalOwnedChild(child, "SIGKILL");
-    process.exit(1);
-  }, 2500);
-}, 420000);
-log("start hosted macOS acceptance");
-main().then(() => log("done hosted macOS acceptance"), error => {
-  console.error(error);
-  process.exitCode = 1;
-}).finally(() => {
-  // Let a clean process exit normally. A leaked Playwright handle still has a deadline.
-  watchdog.unref();
-});
+function runVerification(config) {
+  const watchdog = setTimeout(() => {
+    describeOwnedApp("420-second smoke watchdog expired");
+    const child = active?.child;
+    signalOwnedChild(child, "SIGTERM");
+    setTimeout(() => {
+      signalOwnedChild(child, "SIGKILL");
+      process.exit(1);
+    }, 2500);
+  }, 420000);
+  log("start hosted macOS acceptance");
+  main(config).then(() => log("done hosted macOS acceptance"), error => {
+    console.error(error);
+    process.exitCode = 1;
+  }).finally(() => {
+    // Let a clean process exit normally. A leaked Playwright handle still has a deadline.
+    watchdog.unref();
+  });
+}
+
+module.exports = { bridge, importDocuments, prepareOfflineVault, requireExistingProfileAndDocuments,
+  runVerification, seedProfileAndDocuments };
+
+if (require.main === module) {
+  runVerification({
+    baseVersion: "1.1.3",
+    targetVersion: "1.1.4",
+    seedBaseline: seedLegacyProfile,
+    verifyMigrated: requireLegacyProfileAndEvent,
+  });
+}
