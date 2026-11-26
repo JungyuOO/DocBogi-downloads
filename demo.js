@@ -190,67 +190,43 @@ if (sample) {
 
 
 const story = document.querySelector("[data-story]");
-const livePreview = story?.querySelector("[data-story-live]");
-const stages = [...(story?.querySelectorAll("[data-stage]") ?? [])];
-const links = [...(story?.querySelectorAll(".story-nav a") ?? [])];
-const pinnedLayout = window.matchMedia("(min-width: 980px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)");
 
-if (story && livePreview && stages.length && links.length === stages.length) {
-  let activeIndex = -1;
-  let pendingFrame = 0;
+if (story) {
+  const stages = [...story.querySelectorAll("[data-stage]")];
+  const links = [...story.querySelectorAll(".story-nav a")];
 
-  function activate(index) {
-    if (index === activeIndex) return;
-    const material = stages[index].querySelector("[data-story-content]");
-    if (!material) return;
-    const preview = material.cloneNode(true);
-    const image = preview.querySelector("img");
-    if (image) image.loading = "eager";
-    livePreview.replaceChildren(preview);
-    story.dataset.activeStage = stages[index].dataset.stage;
-    links.forEach((link, i) => {
-      if (i === index) link.setAttribute("aria-current", "step");
+  function selectStage(stage) {
+    for (const item of stages) item.hidden = item !== stage;
+    for (const link of links) {
+      if (link.hash === "#" + stage.id) link.setAttribute("aria-current", "step");
       else link.removeAttribute("aria-current");
+    }
+  }
+
+  function stageForHash(hash) {
+    const target = document.getElementById(hash.slice(1));
+    return stages.find(stage => stage.contains(target));
+  }
+
+  function syncStageFromHash() {
+    const hash = window.location.hash;
+    const stage = stageForHash(hash) ?? (hash === "" || hash === "#details" ? stages[0] : undefined);
+    if (stage) selectStage(stage);
+  }
+
+  for (const link of links) {
+    link.addEventListener("click", event => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      // Reveal the destination before native fragment navigation.
+      const stage = stageForHash(link.hash);
+      if (stage) selectStage(stage);
     });
-    activeIndex = index;
   }
 
-  function updateFromScroll() {
-    pendingFrame = 0;
-    if (!pinnedLayout.matches) return;
-    const header = document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0;
-    const readingLine = header + (window.innerHeight - header) * 0.34;
-    let index = 0;
-    for (let i = 1; i < stages.length; i++) {
-      if (stages[i].getBoundingClientRect().top > readingLine) break;
-      index = i;
-    }
-    activate(index);
-  }
-
-  function requestUpdate() {
-    if (pinnedLayout.matches && !pendingFrame) pendingFrame = window.requestAnimationFrame(updateFromScroll);
-  }
-
-  function updateLayout() {
-    story.classList.toggle("is-pinned", pinnedLayout.matches);
-    livePreview.hidden = !pinnedLayout.matches;
-    if (pinnedLayout.matches) {
-      if (activeIndex === -1) activate(0);
-      requestUpdate();
-    } else {
-      story.dataset.activeStage = "find";
-      links.forEach(link => link.removeAttribute("aria-current"));
-      activeIndex = -1;
-    }
-  }
-
-  window.addEventListener("scroll", requestUpdate, { passive: true });
-  window.addEventListener("resize", requestUpdate);
-  window.addEventListener("hashchange", requestUpdate);
-  window.addEventListener("pageshow", requestUpdate);
-  pinnedLayout.addEventListener("change", updateLayout);
-  updateLayout();
+  const initialStage = stageForHash(window.location.hash) ?? stages[0];
+  if (initialStage) selectStage(initialStage);
+  window.addEventListener("hashchange", syncStageFromHash);
+  window.addEventListener("pageshow", syncStageFromHash);
 }
 
 const theater = document.querySelector("[data-theater]");
