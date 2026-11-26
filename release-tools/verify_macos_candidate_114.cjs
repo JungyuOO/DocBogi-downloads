@@ -373,7 +373,7 @@ async function requireLegacyProfileAndEvent(page, fixture) {
   assert(matchingDay.events.some(item => item.id === event.id));
 }
 
-async function openCalendar(page) {
+async function openDockedCalendar(page) {
   const button = page.getByRole("button", { name: "업무 캘린더", exact: true });
   if (!await button.isVisible()) await page.getByRole("button", { name: "업무 도구", exact: true }).click();
   await button.click();
@@ -383,7 +383,7 @@ async function openCalendar(page) {
   return pane;
 }
 
-async function verifyCalendar(page, fixture) {
+async function verifyCalendar(page, fixture, { openCalendar = openDockedCalendar, verifyCalendarEditor }) {
   assert.equal(await page.title(), "DocBogi");
   const brand = page.locator(".brand").first();
   await brand.locator("small").waitFor({ state: "visible" });
@@ -392,6 +392,7 @@ async function verifyCalendar(page, fixture) {
   const calendar = await openCalendar(page);
   await calendar.getByRole("button", { name: "일정 추가", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "일정 추가", exact: true });
+  await verifyCalendarEditor?.(page, calendar, editor);
   await editor.getByLabel("제목", { exact: true }).fill(rangeTitle);
   await editor.getByLabel("메모", { exact: true }).fill(rangeNotes);
   await editor.getByLabel("시작일", { exact: true }).fill(startDate);
@@ -415,7 +416,16 @@ async function verifyCalendar(page, fixture) {
   await calendar.getByRole("heading", { name: "2027년 10월", exact: true }).waitFor();
   assert.deepEqual(await Promise.all([previous.boundingBox(), next.boundingBox()]), positions);
   await calendar.getByRole("button", { name: "목록", exact: true }).click();
-  await calendar.getByRole("button", { name: new RegExp(rangeTitle) }).waitFor();
+  const listedEvent = calendar.getByRole("button", { name: new RegExp(rangeTitle) });
+  await listedEvent.waitFor();
+  if (verifyCalendarEditor) {
+    await listedEvent.click();
+    const existingEditor = page.getByRole("dialog", { name: "일정 편집", exact: true });
+    await verifyCalendarEditor(page, calendar, existingEditor);
+    assert.equal(await existingEditor.getByLabel("제목", { exact: true }).inputValue(), rangeTitle);
+    await existingEditor.getByRole("button", { name: "닫기", exact: true }).click();
+    await existingEditor.waitFor({ state: "hidden" });
+  }
 
   const event = (await bridge(page, "calendarView", october)).events.find(item => item.title === rangeTitle);
   assert(event, "The overlapping range was not returned for a fully covered month");
@@ -481,7 +491,7 @@ async function verifyUpgrade(electron, mountedBase, mountedCurrent, scratch, use
     const current = { ...options, version: targetVersion };
     const saved = await withApplication(electron, installed, current, targetVersion + " upgrade " + mode, async (_app, page) => {
       await verifyMigrated(page, fixture);
-      return verifyCalendar(page, fixture);
+      return verifyCalendar(page, fixture, config);
     });
     await withApplication(electron, installed, current, targetVersion + " restart " + mode, async (_app, page) => {
       await verifyMigrated(page, fixture);

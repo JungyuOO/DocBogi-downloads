@@ -55,12 +55,12 @@ async function verifyPdf(app, page, scenario) {
   console.log("[mac-smoke] passed PDF import, original-page rendering and text extraction");
 }
 
-async function seedBaseline(app, page, scratch, scenario) {
+async function seedBaseline(app, page, scratch, scenario, baseVersion = "1.1.4") {
   const fixture = await seedProfileAndDocuments(app, page, scratch, scenario);
   const documentIds = fixture.documents.map(document => document.id);
   const baselineEvent = await bridge(page, "calendarSave", {
     date: baselineDate, endDate: baselineEnd, time: null, title: "Existing multi-day calendar event",
-    notes: "Saved by 1.1.4 before the installed upgrade", documentIds,
+    notes: `Saved by ${baseVersion} before the installed upgrade`, documentIds,
     reminderEnabled: true, reminderAnchor: "end", reminderDaysBefore: 1, reminderTime: "09:00",
   });
   assert.equal(baselineEvent.date, baselineDate);
@@ -75,15 +75,19 @@ async function seedBaseline(app, page, scratch, scenario) {
 async function verifyMigrated(page, fixture) {
   await requireExistingProfileAndDocuments(page, fixture);
   const event = await bridge(page, "calendarEvent", fixture.baselineEvent.id);
-  assert.deepEqual(event, fixture.baselineEvent, "The 1.1.4 event, document links and reminder must survive the upgrade");
+  assert.deepEqual(event, fixture.baselineEvent, "The baseline event, document links and reminder must survive the upgrade");
   const day = await bridge(page, "calendarView", { start: baselineEnd, end: baselineEnd });
   assert(day.events.some(item => item.id === event.id), "The migrated event must remain visible on its end date");
 }
 
-runVerification({
-  baseVersion: "1.1.4",
-  targetVersion: "1.1.5",
-  seedBaseline,
-  verifyMigrated,
-  verifyFresh: verifyPdf,
-});
+module.exports = { seedBaseline, verifyMigrated, verifyPdf };
+
+if (require.main === module) {
+  runVerification({
+    baseVersion: "1.1.4",
+    targetVersion: "1.1.5",
+    seedBaseline,
+    verifyMigrated,
+    verifyFresh: verifyPdf,
+  });
+}
