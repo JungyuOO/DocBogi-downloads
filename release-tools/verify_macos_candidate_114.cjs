@@ -445,7 +445,7 @@ async function withOwnedUserData(userData, run) {
   try { return await run(); }
   finally {
     assert.equal(await fs.readFile(marker, "utf8"), ownership);
-    if (!running(active?.child)) await fs.rm(userData, { recursive: true });
+    if (!running(active?.child)) await fs.rm(userData, { recursive: true, maxRetries: 5, retryDelay: 250 });
   }
 }
 
