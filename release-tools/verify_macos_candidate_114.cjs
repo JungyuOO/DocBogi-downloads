@@ -108,7 +108,28 @@ function mainThreadSample(output) {
   return lines.slice(start, end < 0 ? undefined : end).map(line => line.trim()).filter(Boolean);
 }
 
-async function collectFailure(error, label) {
+function sampleOwnedMainThread(child, label, timeout) {
+  return bounded(label, timeout + 800, async () => {
+    if (!running(child)) return [];
+    const samplePath = path.join(path.dirname(diagnostics), ".sample-" + randomUUID());
+    try {
+      await exec("/usr/bin/sample", [String(child.pid), "1", "1", "-file", samplePath], { timeout });
+      return mainThreadSample(await fs.readFile(samplePath, "utf8"));
+    } finally {
+      await fs.unlink(samplePath).catch(() => {});
+    }
+  });
+}
+
+function hasContraryBridgeDiagnostics({ native, renderer }) {
+  return (renderer && renderer.bridge !== "undefined") ||
+    native?.windows?.some(window => window.crashed) ||
+    native?.notices?.some(notice =>
+      ["preload-error", "did-fail-load", "render-process-gone"].includes(notice.type) ||
+      (notice.type === "native-dialog" && notice.dialogType === "error"));
+}
+
+async function collectFailure(error, label, retryMainThread = false) {
   const current = active;
   const metadata = { stage: error.smokeStage ?? activeStage, errorName: error.name, version: current?.version ?? null,
     pid: current?.child?.pid ?? null, windowUrl: current?.page?.url() ?? null, stderr: current?.stderr ?? "" };
@@ -125,19 +146,14 @@ async function collectFailure(error, label) {
       url: location.href.split("?")[0], title: document.title.slice(0, 120),
       ready: document.readyState, visibility: document.visibilityState, bridge: typeof window.docvia,
     }))),
-    bounded("sample owned main process", 5000, async () => {
-      if (!running(current?.child)) return [];
-      const samplePath = path.join(path.dirname(diagnostics), ".sample-" + randomUUID());
-      try {
-        await exec("/usr/bin/sample", [String(current.child.pid), "1", "1", "-file", samplePath], { timeout: 4200 });
-        return mainThreadSample(await fs.readFile(samplePath, "utf8"));
-      } finally {
-        await fs.unlink(samplePath).catch(() => {});
-      }
-    }),
+    sampleOwnedMainThread(current?.child, "sample owned main process", 4200),
   ]);
   const value = (result, otherwise) => result.status === "fulfilled" ? result.value ?? otherwise : otherwise;
-  const native = value(attempts[0], null), renderer = value(attempts[1], null), sample = value(attempts[2], []);
+  const native = value(attempts[0], null), renderer = value(attempts[1], null);
+  let sample = value(attempts[2], []);
+  if (retryMainThread && !sample.length && !hasContraryBridgeDiagnostics({ native, renderer }) && running(current?.child)) {
+    sample = await sampleOwnedMainThread(current.child, "resample owned baseline main process", 8200).catch(() => []);
+  }
   const credentialFrames = sample.filter(line =>
     /\b(?:SecKeychain\w+|SecItemCopyMatching|AuthorizationCopyRights|SecurityAgent|securityd::client|AppleKeychain)\b/.test(line));
   const waiting = sample.some(line => /mach_msg|semaphore_wait|dispatch_sync|xpc_connection_send_message_with_reply_sync|CFRunLoopRun/.test(line));
@@ -156,7 +172,7 @@ async function collectFailure(error, label) {
     await fs.writeFile(path.join(diagnostics, name + "-" + randomUUID() + ".json"), JSON.stringify(result, null, 2));
   }
   if (osCredentialConsent) error.credentialWaitPhase = label;
-  return osCredentialConsent;
+  return result;
 }
 
 function running(child) {
@@ -235,7 +251,7 @@ async function installBundle(source, applications, version, upgrading = false) {
   });
 }
 
-async function withApplication(electron, bundle, { name, version, userData, isolateData = false, mockKeychain = false }, label, exercise) {
+async function withApplication(electron, bundle, { name, version, userData, isolateData = false, mockKeychain = false, baseline = false }, label, exercise) {
   const env = cleanEnvironment();
   if (isolateData) env.DOCVIA_DATA_DIR = userData;
   const launchOptions = {
@@ -251,6 +267,7 @@ async function withApplication(electron, bundle, { name, version, userData, isol
   active = instance;
   child.stderr?.on("data", data => { instance.stderr = (instance.stderr + data.toString("utf8")).slice(-6000); });
   let exerciseError;
+  let baselineBridgeFailure;
   try {
     const runtime = await bounded("read installed runtime " + label, 12000, () => app.evaluate(instrumentNativeWindows));
     assert.equal(runtime.version, version);
@@ -276,7 +293,14 @@ async function withApplication(electron, bundle, { name, version, userData, isol
     return await bounded("exercise " + label, 62000, () => exercise(app, page));
   } catch (error) {
     exerciseError = error;
-    error.osCredentialConsent = await collectFailure(error, label);
+    const baselineBridgeTimeout = baseline && !mockKeychain &&
+      error.name === "TimeoutError" && error.smokeStage === "renderer bridge ready " + label;
+    const failure = await collectFailure(error, label, baselineBridgeTimeout);
+    error.osCredentialConsent = failure.osCredentialConsent;
+    if (baselineBridgeTimeout && !failure.osCredentialConsent && !failure.sample.mainThreadFound &&
+        !hasContraryBridgeDiagnostics(failure)) {
+      baselineBridgeFailure = failure;
+    }
     throw error;
   } finally {
     try {
@@ -284,8 +308,16 @@ async function withApplication(electron, bundle, { name, version, userData, isol
       await bounded("confirm process exit " + label, 6000, () => waitForExit(child, 5000));
       await bounded("check instance lock " + label, 4000, () => requireReleasedLock(userData));
     } catch (error) {
-      try { error.osCredentialConsent = await collectFailure(error, label + " close"); }
-      finally { await stopOwnedChild(child); }
+      try {
+        const close = await collectFailure(error, label + " close");
+        error.osCredentialConsent = close.osCredentialConsent;
+        if (baselineBridgeFailure?.pid === child.pid && close.pid === child.pid &&
+            close.stage === "close " + label && close.osCredentialConsent && !hasContraryBridgeDiagnostics(close)) {
+          exerciseError.osCredentialConsent = true;
+          exerciseError.credentialWaitPhase = label;
+          log("confirmed baseline bridge credential wait during close for PID " + child.pid);
+        }
+      } finally { await stopOwnedChild(child); }
       if (!exerciseError) throw error;
     } finally {
       if (!running(child)) active = undefined;
@@ -484,7 +516,7 @@ async function verifyUpgrade(electron, mountedBase, mountedCurrent, scratch, use
   const options = { name: "DocBogi", userData, isolateData: mockKeychain, mockKeychain };
   await withOwnedUserData(userData, async () => {
     const installed = await installBundle(mountedBase, applications, baseVersion + " " + mode);
-    const fixture = await withApplication(electron, installed, { ...options, version: baseVersion },
+    const fixture = await withApplication(electron, installed, { ...options, version: baseVersion, baseline: true },
       baseVersion + " baseline " + mode, (app, page) => seedBaseline(app, page, scratch, scenario));
     const upgraded = await installBundle(mountedCurrent, applications, targetVersion + " " + mode, true);
     assert.equal(upgraded, installed);
