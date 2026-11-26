@@ -92,8 +92,8 @@ h2 {
   gap: 8px;
   width: fit-content;
   text-decoration: none;
-  font: 600 1.58rem/1 Georgia, "Times New Roman", serif;
-  letter-spacing: -.045em;
+  font: 700 1.58rem/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -.035em;
 }
 .brand img { border-radius: 7px; }
 .site-nav { gap: clamp(12px, 3vw, 36px); }
@@ -692,8 +692,8 @@ h2 {
   border-bottom: 1px solid var(--line);
 }
 .install-platform h3 {
-  font: 600 clamp(1.65rem, 3.15vw, 2.9rem)/1 Georgia, "Times New Roman", serif;
-  letter-spacing: -.035em;
+  font: 650 clamp(1.65rem, 3.15vw, 2.9rem)/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -.04em;
 }
 .install-platform p { color: var(--muted); }
 .install-platform .install-architecture { margin-top: 8px; font-size: .84rem; }
