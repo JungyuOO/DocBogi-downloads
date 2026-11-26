@@ -6,30 +6,31 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모아 파
 
 [다운로드](https://jungyuoo.github.io/DocBogi-downloads/#downloads) · [사용 가이드](user-guide.md) · [지원 형식](#지원-형식)
 
-[![DocBogi 사용 시연](media/docbogi-actions-113.webp?v=2)](media/docbogi-actions-113.mp4?v=2)
+[![DocBogi v1.1.3 사용 시연](media/docbogi-actions-113.webp?v=2)](media/docbogi-actions-113.mp4?v=2)
 
-회의록을 검색해 AI 요약과 오탈자 후보를 확인하고, 문서 작업실에서 수정한 사본을 저장합니다. 태그 일괄 정리, 대장 Excel 미리보기, 자동화 실행 기록, 일정에 연결된 원문도 볼 수 있습니다.
+이 두 영상은 v1.1.3에서 촬영했습니다. 회의록을 검색해 AI 요약과 오탈자 후보를 확인하고, 문서 작업실에서 수정한 사본을 저장합니다. 태그 일괄 정리, 대장 Excel 미리보기, 자동화 실행 기록, 일정에 연결된 원문도 볼 수 있습니다.
 
-[DocBogi 사용 시연](media/docbogi-actions-113.mp4?v=2) (1분 45초) · [자동 분류·문서 질문·인수인계 동작 보기](media/docbogi-actions-more-113.mp4?v=2) (53초)
+[DocBogi v1.1.3 사용 시연](media/docbogi-actions-113.mp4?v=2) (1분 45초) · [자동 분류·문서 질문·인수인계 동작 보기](media/docbogi-actions-more-113.mp4?v=2) (53초)
 
 ## 설치
 
 | 운영체제 | 설치 파일 | 설치 방법 |
 | --- | --- | --- |
-| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.5/DocBogi-Setup-1.1.5-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
-| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.5/DocBogi-1.1.5-mac-universal.dmg) | DMG를 열어 앱을 **응용 프로그램**으로 옮겨 실행합니다. |
+| Windows x64 | [EXE 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.6/DocBogi-Setup-1.1.6-x64.exe) | EXE를 열고 설치 마법사를 진행합니다. |
+| macOS · Apple Silicon 및 Intel | [공용 DMG 다운로드](https://github.com/JungyuOO/DocBogi-downloads/releases/download/v1.1.6/DocBogi-1.1.6-mac-universal.dmg) | DMG를 열어 앱을 **응용 프로그램**으로 옮겨 실행합니다. |
 
-**v1.1.5.** PDF의 스캔·삽입 이미지에서 발견한 오탈자 후보를 원본 이미지와 대조합니다. Windows에서는 창을 닫아도 알림 영역에서 실행을 계속하며, DocBogi 아이콘으로 창을 다시 열 수 있습니다.
+**v1.1.6.** 왼쪽 **업무 캘린더**를 열면 가운데에서 일정을 보고 오른쪽 편집 창에서 일정을 추가하거나 수정할 수 있습니다. 문서 목록의 Astryx 진행 막대에는 본문 추출과 AI 분석의 대기·진행 상태가 표시됩니다. Windows 설치 마법사에는 DocBogi 로고와 설치·확인·완료 메시지가 표시됩니다.
 
-배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.5) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
+배포 파일의 SHA-256은 릴리스에 있습니다. 첫 실행 때 Windows SmartScreen이나 macOS Gatekeeper가 표시되면 사용 가이드의 설치 항목을 확인하세요. [릴리스 및 SHA-256](https://github.com/JungyuOO/DocBogi-downloads/releases/tag/v1.1.6) · [설치 안내](user-guide.md#설치하고-보관함-만들기)
 
 ## 메뉴 찾기
 
-**전체 문서 · 최근 문서 · 즐겨찾기 · 자동 정리함 · 검토할 문서 · 문서 작업실** 바로 아래에 **내 폴더**가 있습니다. 프로젝트 모음과 저장된 보기는 폴더 아래에서 열 수 있습니다.
+**전체 문서 · 최근 문서 · 즐겨찾기 · 자동 정리함 · 검토할 문서 · 업무 캘린더 · 문서 작업실** 바로 아래에 **내 폴더**가 있습니다. 프로젝트 모음과 저장된 보기는 폴더 아래에서 열 수 있습니다.
 
 | 할 일 | 열 위치 |
 | --- | --- |
-| 계약대장을 작성하거나 기한을 추적하고 자동화 규칙을 실행하기 | 왼쪽에서 **업무 도구**를 펼쳐 **업무대장**, **업무 캘린더**, **업무 자동화**를 선택 |
+| 일정과 기한 추적하기 | 왼쪽에서 **업무 캘린더** 선택 |
+| 계약대장을 작성하거나 자동화 규칙을 실행하기 | 왼쪽에서 **업무 도구**를 펼쳐 **업무대장** 또는 **업무 자동화** 선택 |
 | 새 문서를 분류할 규칙 편집하기 | **자동 정리함 → 자동 분류 규칙** |
 | 진행 중이거나 실패한 작업 확인하기 | 하단 상태 표시줄의 **처리 현황** |
 | 프로젝트의 자료와 업무 내용을 전달하기 | **프로젝트 모음 → 프로젝트 선택 → 인수인계 만들기** |
@@ -56,9 +57,9 @@ PDF, Word, PowerPoint, Excel, 한글 문서를 내 PC의 보관함에 모아 파
 
 1. 보관함에서 제안요청서를 선택하고 문서 상세의 **캘린더에 추가**를 누릅니다.
 2. **문서 날짜 후보**에서 제출 마감의 날짜, 시각과 인용문을 확인해 선택한 뒤 **저장**을 누릅니다.
-3. **업무 도구 → 업무 캘린더**에서 월간으로 보거나 목록을 엽니다. 방금 등록한 일정을 열고 **원문 위치 열기**를 누르면 문서 작업실에 근거가 표시됩니다.
+3. 왼쪽 **업무 캘린더**를 누르면 가운데에 월간 보기와 목록이 열립니다. 방금 등록한 일정을 선택하면 오른쪽 편집 창이 열립니다. **원문 위치 열기**를 누르면 문서 작업실에 근거가 표시되고 **업무 캘린더로**를 누르면 보던 달로 돌아갑니다.
 
-문서 없이도 일정을 만들 수 있습니다. 시작일과 종료일이 다른 일정은 월간 보기에서 주별로 이어집니다. 관련 문서를 여러 개 연결하고, 시작일 또는 종료일을 기준으로 알림을 설정할 수 있습니다. 원문의 날짜가 바뀌면 기존 기간과 새 후보를 비교한 뒤 적용하세요. [월간 캘린더](media/calendar-113.webp) · [작업실의 원문 근거](media/evidence-113.webp)
+문서 없이도 일정을 만들 수 있습니다. 시작일과 종료일이 다른 일정은 월간 보기에서 주별로 이어집니다. 관련 문서를 여러 개 연결하고, 시작일 또는 종료일을 기준으로 알림을 설정할 수 있습니다. 원문의 날짜가 바뀌면 기존 기간과 새 후보를 비교한 뒤 적용하세요. [월간 캘린더](media/calendar-116.webp) · [작업실의 원문 근거](media/evidence-113.webp)
 
 ## 문서가 처리되는 방식
 
