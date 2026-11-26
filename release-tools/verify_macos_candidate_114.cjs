@@ -211,10 +211,10 @@ async function bridge(page, method, ...args) {
 async function installBundle(source, applications, version, upgrading = false) {
   const installed = path.join(applications, "DocBogi.app");
   const staged = path.join(applications, ".staging-" + randomUUID() + ".app");
-  return bounded("install " + version, 36000, async () => {
+  return bounded("install " + version, 110000, async () => {
     assert(!running(active?.child), "Close the owned application before installing another version");
-    await exec("/usr/bin/ditto", [source, staged], { timeout: 24000 });
-    await exec("/usr/bin/codesign", ["--verify", "--deep", "--strict", staged], { timeout: 8000 });
+    await exec("/usr/bin/ditto", [source, staged], { timeout: 60000 });
+    await exec("/usr/bin/codesign", ["--verify", "--deep", "--strict", staged], { timeout: 45000 });
     if (upgrading) {
       // Darwin swaps both complete bundles in one rename operation on the same volume.
       const exchange = [
