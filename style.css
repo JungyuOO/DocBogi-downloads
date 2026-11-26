@@ -511,7 +511,14 @@ h2 {
 .story-nav a[aria-current="step"] { box-shadow: inset 2px 0 var(--accent); }
 .story-stage { position: relative; }
 .story-stage + .story-stage { margin-top: 44px; }
-.story-stage[hidden] + .story-stage:not([hidden]) { margin-top: 0; }
+.story-surface.is-enhanced .story-stages { display: grid; }
+.story-surface.is-enhanced .story-stage {
+  grid-area: 1 / 1;
+  min-width: 0;
+  margin-top: 0;
+}
+.is-enhanced > .story-stages > [aria-hidden="true"],
+.is-enhanced .theater-screen > [aria-hidden="true"] { visibility: hidden; }
 .legacy-anchor { position: absolute; inset-block-start: 0; }
 .stage-material {
   display: grid;
@@ -538,6 +545,23 @@ h2 {
   height: auto;
   border: 1px solid var(--line);
   background: var(--sheet);
+}
+.story-surface.is-enhanced .stage-preview img {
+  aspect-ratio: 1440 / 904;
+  object-fit: contain;
+}
+@supports (grid-template-rows: subgrid) {
+  .story-surface.is-enhanced .story-stages {
+    grid-template-rows: auto auto;
+    row-gap: 20px;
+  }
+  .story-surface.is-enhanced .story-stage,
+  .story-surface.is-enhanced .stage-material {
+    display: grid;
+    grid-row: 1 / -1;
+    grid-template-rows: subgrid;
+    row-gap: normal;
+  }
 }
 .stage-preview figcaption, .outcome-capture figcaption {
   padding-block: 8px;
@@ -589,6 +613,7 @@ h2 {
 .theater-chapters small { display: block; margin-top: 4px; font-size: .78rem; }
 .theater-play { font-size: 1.2rem; line-height: 1; }
 .theater-screen { display: grid; gap: 24px; min-width: 0; }
+.product-demo.is-enhanced .demo { grid-area: 1 / 1; }
 .demo { min-width: 0; }
 .demo video {
   width: 100%;

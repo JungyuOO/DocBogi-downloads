@@ -189,6 +189,19 @@ if (sample) {
 }
 
 
+function activateFragmentLink(event, link, activate) {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  activate(link.hash);
+  if (window.location.hash !== link.hash) window.history.pushState(window.history.state, "", link.hash);
+}
+
+function makePanelInactive(panel, inactive) {
+  panel.inert = inactive;
+  if (inactive) panel.setAttribute("aria-hidden", "true");
+  else panel.removeAttribute("aria-hidden");
+}
+
 const story = document.querySelector("[data-story]");
 
 if (story) {
@@ -196,7 +209,7 @@ if (story) {
   const links = [...story.querySelectorAll(".story-nav a")];
 
   function selectStage(stage) {
-    for (const item of stages) item.hidden = item !== stage;
+    for (const item of stages) makePanelInactive(item, item !== stage);
     for (const link of links) {
       if (link.hash === "#" + stage.id) link.setAttribute("aria-current", "step");
       else link.removeAttribute("aria-current");
@@ -215,17 +228,19 @@ if (story) {
   }
 
   for (const link of links) {
-    link.addEventListener("click", event => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      // Reveal the destination before native fragment navigation.
-      const stage = stageForHash(link.hash);
+    link.addEventListener("click", event => activateFragmentLink(event, link, hash => {
+      const stage = stageForHash(hash);
       if (stage) selectStage(stage);
-    });
+    }));
   }
 
   const initialStage = stageForHash(window.location.hash) ?? stages[0];
-  if (initialStage) selectStage(initialStage);
+  if (initialStage) {
+    selectStage(initialStage);
+    story.classList.add("is-enhanced");
+  }
   window.addEventListener("hashchange", syncStageFromHash);
+  window.addEventListener("popstate", syncStageFromHash);
   window.addEventListener("pageshow", syncStageFromHash);
 }
 
@@ -241,7 +256,7 @@ if (theater && reels.length && reelLinks.length === reels.length) {
     const restoreFocus = selected?.contains(document.activeElement);
     for (const reel of reels) {
       if (reel !== next) reel.querySelector("video")?.pause();
-      reel.hidden = reel !== next;
+      makePanelInactive(reel, reel !== next);
     }
     for (const link of reelLinks) {
       if (link.hash === "#" + id) {
@@ -259,14 +274,12 @@ if (theater && reels.length && reelLinks.length === reels.length) {
   }
 
   for (const link of reelLinks) {
-    link.addEventListener("click", event => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      // The destination must be visible before native fragment navigation starts.
-      selectReel(link.hash.slice(1));
-    });
+    link.addEventListener("click", event => activateFragmentLink(event, link, hash => selectReel(hash.slice(1))));
   }
   window.addEventListener("hashchange", syncReelFromHash);
+  window.addEventListener("popstate", syncReelFromHash);
   window.addEventListener("pageshow", syncReelFromHash);
   syncReelFromHash();
   if (!selected) selectReel(reels[0].id);
+  theater.classList.add("is-enhanced");
 }
