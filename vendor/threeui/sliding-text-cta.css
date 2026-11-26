@@ -1,0 +1,46 @@
+/*
+ * Adapted from SlidingTextCta in ThreeUI Community 1.2.0.
+ * Copyright (c) 2026 Meng To. MIT licensed, see LICENSE.
+ */
+.threeui-sliding-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.threeui-sliding-cta__label {
+  display: block;
+}
+
+.threeui-sliding-cta__label--incoming {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  visibility: hidden;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .threeui-sliding-cta__label {
+    transition: transform 500ms ease-out, opacity 500ms ease-out, filter 500ms ease-out;
+  }
+
+  .threeui-sliding-cta__label--incoming {
+    visibility: visible;
+    transform: translateY(-32px);
+    filter: blur(4px);
+    transition: transform 300ms ease-in-out, opacity 300ms ease-in-out, filter 300ms ease-in-out;
+  }
+
+  .threeui-sliding-cta:not(:disabled):is(:hover, :focus-visible) .threeui-sliding-cta__label:first-child {
+    transform: translateY(32px);
+    opacity: 0;
+    filter: blur(4px);
+  }
+
+  .threeui-sliding-cta:not(:disabled):is(:hover, :focus-visible) .threeui-sliding-cta__label--incoming {
+    transform: translateY(0);
+    opacity: 1;
+    filter: none;
+  }
+}

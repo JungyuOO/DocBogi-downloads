@@ -1,0 +1,23 @@
+ThreeUI Community 1.2.0
+Package: @designcodeio/threeui
+Author: Meng To
+License: MIT (see LICENSE)
+
+Component: SlidingTextCta
+Source: https://www.npmjs.com/package/@designcodeio/threeui/v/1.2.0
+Repository: https://github.com/MengTo/threeui
+Source file in the distribution: lib-dist/shaders/neuform-isolated/sources/sliding-text-cta.html.js
+
+DocBogi adapts the component's paired sliding labels, opposing vertical motion,
+opacity, blur, timing and easing into local CSS for the sample classification
+button. The React wrapper, effect backgrounds, and bundled assets are omitted.
+
+Component: DiagnosticsPanel
+Source file in the distribution: lib-dist/shaders/neuform-isolated/sources/diagnostics-panel.html.js
+Source sections: "3D Canvas Utilities", "Card 1: Fixed Cropping", and "Interactive & Shooting Lines"
+
+DocBogi uses this component's isometric projectIso function, layered depth
+offsets, and element-relative pointer coordinates for the sample document and
+folder. DOM transforms are applied on pointer movement in place of the
+continuously rendered canvas. Motion is optional and no runtime, artwork,
+CDN script, or bundled asset from the component is shipped.
